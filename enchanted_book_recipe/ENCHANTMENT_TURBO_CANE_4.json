@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_CANE_4",
+  "displayname": "ENCHANTMENT_TURBO_CANE_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_CANE_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_CANE_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_CANE_1:8"
+    }
+  ]
+}

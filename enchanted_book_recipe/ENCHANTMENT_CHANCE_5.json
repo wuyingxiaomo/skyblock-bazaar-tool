@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_CHANCE_5",
+  "displayname": "ENCHANTMENT_CHANCE_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_CHANCE_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_CHANCE_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_CHANCE_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_CHANCE_1:16"
+    }
+  ]
+}

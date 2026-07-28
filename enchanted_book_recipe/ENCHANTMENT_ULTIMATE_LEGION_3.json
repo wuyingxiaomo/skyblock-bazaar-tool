@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_LEGION_3",
+  "displayname": "ENCHANTMENT_ULTIMATE_LEGION_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_LEGION_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_LEGION_1:4"
+    }
+  ]
+}

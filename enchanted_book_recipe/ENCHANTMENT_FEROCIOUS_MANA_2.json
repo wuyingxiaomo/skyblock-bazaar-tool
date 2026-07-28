@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_FEROCIOUS_MANA_2",
+  "displayname": "ENCHANTMENT_FEROCIOUS_MANA_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_1:2"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_GIANT_KILLER_2",
+  "displayname": "ENCHANTMENT_GIANT_KILLER_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_GIANT_KILLER_1:2"
+    }
+  ]
+}

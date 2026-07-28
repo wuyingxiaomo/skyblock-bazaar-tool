@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_REFLECTION_4",
+  "displayname": "ENCHANTMENT_REFLECTION_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_REFLECTION_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_REFLECTION_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_REFLECTION_1:8"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_TRIPLE_STRIKE_4",
+  "displayname": "ENCHANTMENT_TRIPLE_STRIKE_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TRIPLE_STRIKE_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TRIPLE_STRIKE_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_TRIPLE_STRIKE_1:8"
+    }
+  ]
+}

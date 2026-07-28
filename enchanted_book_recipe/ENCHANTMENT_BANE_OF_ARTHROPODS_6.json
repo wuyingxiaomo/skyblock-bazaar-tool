@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_BANE_OF_ARTHROPODS_6",
+  "displayname": "ENCHANTMENT_BANE_OF_ARTHROPODS_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_BANE_OF_ARTHROPODS_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_BANE_OF_ARTHROPODS_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_BANE_OF_ARTHROPODS_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_BANE_OF_ARTHROPODS_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_BANE_OF_ARTHROPODS_1:32"
+    }
+  ]
+}

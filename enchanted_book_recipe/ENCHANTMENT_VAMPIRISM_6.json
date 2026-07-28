@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_VAMPIRISM_6",
+  "displayname": "ENCHANTMENT_VAMPIRISM_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_VAMPIRISM_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_VAMPIRISM_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_VAMPIRISM_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_VAMPIRISM_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_VAMPIRISM_1:32"
+    }
+  ]
+}

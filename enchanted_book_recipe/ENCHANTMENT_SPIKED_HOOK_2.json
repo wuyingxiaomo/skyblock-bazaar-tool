@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_SPIKED_HOOK_2",
+  "displayname": "ENCHANTMENT_SPIKED_HOOK_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_SPIKED_HOOK_1:2"
+    }
+  ]
+}

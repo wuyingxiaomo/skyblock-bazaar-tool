@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_CHIMERA_4",
+  "displayname": "ENCHANTMENT_ULTIMATE_CHIMERA_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_CHIMERA_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_CHIMERA_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_CHIMERA_1:8"
+    }
+  ]
+}

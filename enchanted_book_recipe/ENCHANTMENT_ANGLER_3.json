@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_ANGLER_3",
+  "displayname": "ENCHANTMENT_ANGLER_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ANGLER_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ANGLER_1:4"
+    }
+  ]
+}

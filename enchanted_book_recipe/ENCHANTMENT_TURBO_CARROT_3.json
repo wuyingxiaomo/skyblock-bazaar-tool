@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_CARROT_3",
+  "displayname": "ENCHANTMENT_TURBO_CARROT_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_CARROT_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_CARROT_1:4"
+    }
+  ]
+}

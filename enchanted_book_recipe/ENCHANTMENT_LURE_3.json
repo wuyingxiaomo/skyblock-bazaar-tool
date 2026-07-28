@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_LURE_3",
+  "displayname": "ENCHANTMENT_LURE_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_LURE_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_LURE_1:4"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_DEDICATION_3",
+  "displayname": "ENCHANTMENT_DEDICATION_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_DEDICATION_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_DEDICATION_1:4"
+    }
+  ]
+}

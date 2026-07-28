@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_EXECUTE_6",
+  "displayname": "ENCHANTMENT_EXECUTE_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_EXECUTE_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_EXECUTE_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_EXECUTE_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_EXECUTE_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_EXECUTE_1:32"
+    }
+  ]
+}

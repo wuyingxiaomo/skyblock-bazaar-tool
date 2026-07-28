@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_SUGAR_RUSH_3",
+  "displayname": "ENCHANTMENT_SUGAR_RUSH_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_SUGAR_RUSH_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_SUGAR_RUSH_1:4"
+    }
+  ]
+}

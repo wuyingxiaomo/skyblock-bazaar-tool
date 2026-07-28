@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_REND_2",
+  "displayname": "ENCHANTMENT_ULTIMATE_REND_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_REND_1:2"
+    }
+  ]
+}

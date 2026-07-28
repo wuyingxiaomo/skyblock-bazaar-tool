@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_CRITICAL_4",
+  "displayname": "ENCHANTMENT_CRITICAL_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_CRITICAL_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_CRITICAL_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_CRITICAL_1:8"
+    }
+  ]
+}

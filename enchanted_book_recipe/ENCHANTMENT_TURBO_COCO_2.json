@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_COCO_2",
+  "displayname": "ENCHANTMENT_TURBO_COCO_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_COCO_1:2"
+    }
+  ]
+}

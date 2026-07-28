@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_CASTER_3",
+  "displayname": "ENCHANTMENT_CASTER_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_CASTER_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_CASTER_1:4"
+    }
+  ]
+}

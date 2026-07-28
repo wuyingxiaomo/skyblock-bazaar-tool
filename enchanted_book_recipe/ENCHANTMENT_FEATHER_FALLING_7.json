@@ -1,0 +1,24 @@
+{
+  "internalname": "ENCHANTMENT_FEATHER_FALLING_7",
+  "displayname": "ENCHANTMENT_FEATHER_FALLING_7",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_FEATHER_FALLING_6:2"
+    },
+    {
+      "A1": "ENCHANTMENT_FEATHER_FALLING_5:4"
+    },
+    {
+      "A1": "ENCHANTMENT_FEATHER_FALLING_4:8"
+    },
+    {
+      "A1": "ENCHANTMENT_FEATHER_FALLING_3:16"
+    },
+    {
+      "A1": "ENCHANTMENT_FEATHER_FALLING_2:32"
+    },
+    {
+      "A1": "ENCHANTMENT_FEATHER_FALLING_1:64"
+    }
+  ]
+}

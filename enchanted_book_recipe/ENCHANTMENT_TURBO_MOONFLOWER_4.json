@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_MOONFLOWER_4",
+  "displayname": "ENCHANTMENT_TURBO_MOONFLOWER_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_MOONFLOWER_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_MOONFLOWER_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_MOONFLOWER_1:8"
+    }
+  ]
+}

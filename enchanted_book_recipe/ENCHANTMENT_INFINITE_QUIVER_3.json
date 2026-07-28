@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_INFINITE_QUIVER_3",
+  "displayname": "ENCHANTMENT_INFINITE_QUIVER_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_1:4"
+    }
+  ]
+}

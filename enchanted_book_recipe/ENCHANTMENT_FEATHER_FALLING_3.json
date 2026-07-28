@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_FEATHER_FALLING_3",
+  "displayname": "ENCHANTMENT_FEATHER_FALLING_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_FEATHER_FALLING_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_FEATHER_FALLING_1:4"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_SHARPNESS_2",
+  "displayname": "ENCHANTMENT_SHARPNESS_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_SHARPNESS_1:2"
+    }
+  ]
+}

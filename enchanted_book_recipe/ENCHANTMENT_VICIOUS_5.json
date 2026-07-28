@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_VICIOUS_5",
+  "displayname": "ENCHANTMENT_VICIOUS_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_VICIOUS_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_VICIOUS_3:4"
+    }
+  ]
+}

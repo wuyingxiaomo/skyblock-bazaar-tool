@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_WISE_5",
+  "displayname": "ENCHANTMENT_ULTIMATE_WISE_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_WISE_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_WISE_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_WISE_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_WISE_1:16"
+    }
+  ]
+}

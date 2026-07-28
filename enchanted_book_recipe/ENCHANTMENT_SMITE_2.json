@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_SMITE_2",
+  "displayname": "ENCHANTMENT_SMITE_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_SMITE_1:2"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_DRAGON_HUNTER_2",
+  "displayname": "ENCHANTMENT_DRAGON_HUNTER_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_DRAGON_HUNTER_1:2"
+    }
+  ]
+}

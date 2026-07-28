@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_DEPTH_STRIDER_2",
+  "displayname": "ENCHANTMENT_DEPTH_STRIDER_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_DEPTH_STRIDER_1:2"
+    }
+  ]
+}

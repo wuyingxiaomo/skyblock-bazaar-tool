@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_SYPHON_4",
+  "displayname": "ENCHANTMENT_SYPHON_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_SYPHON_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_SYPHON_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_SYPHON_1:8"
+    }
+  ]
+}

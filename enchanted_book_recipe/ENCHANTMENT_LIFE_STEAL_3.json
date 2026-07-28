@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_LIFE_STEAL_3",
+  "displayname": "ENCHANTMENT_LIFE_STEAL_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_LIFE_STEAL_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_LIFE_STEAL_1:4"
+    }
+  ]
+}

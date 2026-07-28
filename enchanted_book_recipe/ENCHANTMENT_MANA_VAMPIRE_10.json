@@ -1,0 +1,33 @@
+{
+  "internalname": "ENCHANTMENT_MANA_VAMPIRE_10",
+  "displayname": "ENCHANTMENT_MANA_VAMPIRE_10",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_9:2"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_8:4"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_7:8"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_6:16"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_5:32"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_4:64"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_3:128"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_2:256"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_1:512"
+    }
+  ]
+}

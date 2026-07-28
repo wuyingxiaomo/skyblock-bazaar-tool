@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_MAGNET_2",
+  "displayname": "ENCHANTMENT_MAGNET_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_MAGNET_1:2"
+    }
+  ]
+}

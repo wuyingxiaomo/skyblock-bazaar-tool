@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_CACTUS_3",
+  "displayname": "ENCHANTMENT_TURBO_CACTUS_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_CACTUS_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_CACTUS_1:4"
+    }
+  ]
+}

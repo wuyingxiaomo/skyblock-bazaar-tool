@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_LETHALITY_4",
+  "displayname": "ENCHANTMENT_LETHALITY_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_LETHALITY_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_LETHALITY_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_LETHALITY_1:8"
+    }
+  ]
+}

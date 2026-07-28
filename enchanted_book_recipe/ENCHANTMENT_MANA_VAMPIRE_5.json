@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_MANA_VAMPIRE_5",
+  "displayname": "ENCHANTMENT_MANA_VAMPIRE_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_1:16"
+    }
+  ]
+}

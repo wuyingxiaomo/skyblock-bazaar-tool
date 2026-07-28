@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_BLESSING_6",
+  "displayname": "ENCHANTMENT_BLESSING_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_BLESSING_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_BLESSING_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_BLESSING_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_BLESSING_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_BLESSING_1:32"
+    }
+  ]
+}

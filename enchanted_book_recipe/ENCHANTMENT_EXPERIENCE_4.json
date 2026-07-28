@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_EXPERIENCE_4",
+  "displayname": "ENCHANTMENT_EXPERIENCE_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_EXPERIENCE_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_EXPERIENCE_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_EXPERIENCE_1:8"
+    }
+  ]
+}

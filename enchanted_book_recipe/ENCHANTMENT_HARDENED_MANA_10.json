@@ -1,0 +1,33 @@
+{
+  "internalname": "ENCHANTMENT_HARDENED_MANA_10",
+  "displayname": "ENCHANTMENT_HARDENED_MANA_10",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_9:2"
+    },
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_8:4"
+    },
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_7:8"
+    },
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_6:16"
+    },
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_5:32"
+    },
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_4:64"
+    },
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_3:128"
+    },
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_2:256"
+    },
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_1:512"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_HARDENED_MANA_3",
+  "displayname": "ENCHANTMENT_HARDENED_MANA_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_HARDENED_MANA_1:4"
+    }
+  ]
+}

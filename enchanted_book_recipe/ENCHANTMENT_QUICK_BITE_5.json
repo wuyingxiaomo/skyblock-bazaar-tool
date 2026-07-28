@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_QUICK_BITE_5",
+  "displayname": "ENCHANTMENT_QUICK_BITE_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_QUICK_BITE_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_QUICK_BITE_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_QUICK_BITE_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_QUICK_BITE_1:16"
+    }
+  ]
+}

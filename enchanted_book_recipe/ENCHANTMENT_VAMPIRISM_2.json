@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_VAMPIRISM_2",
+  "displayname": "ENCHANTMENT_VAMPIRISM_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_VAMPIRISM_1:2"
+    }
+  ]
+}

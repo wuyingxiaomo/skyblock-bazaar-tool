@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_ROSE_4",
+  "displayname": "ENCHANTMENT_TURBO_ROSE_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_ROSE_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_ROSE_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_ROSE_1:8"
+    }
+  ]
+}

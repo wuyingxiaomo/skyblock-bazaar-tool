@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_CHARM_4",
+  "displayname": "ENCHANTMENT_CHARM_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_CHARM_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_CHARM_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_CHARM_1:8"
+    }
+  ]
+}

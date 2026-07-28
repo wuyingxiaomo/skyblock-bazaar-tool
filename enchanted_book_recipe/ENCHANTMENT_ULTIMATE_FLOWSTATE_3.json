@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_FLOWSTATE_3",
+  "displayname": "ENCHANTMENT_ULTIMATE_FLOWSTATE_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_FLOWSTATE_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_FLOWSTATE_1:4"
+    }
+  ]
+}

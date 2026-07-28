@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_PUMPKIN_5",
+  "displayname": "ENCHANTMENT_TURBO_PUMPKIN_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_PUMPKIN_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_PUMPKIN_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_PUMPKIN_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_PUMPKIN_1:16"
+    }
+  ]
+}

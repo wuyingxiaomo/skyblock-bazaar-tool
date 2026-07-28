@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_QUANTUM_4",
+  "displayname": "ENCHANTMENT_QUANTUM_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_QUANTUM_3:2"
+    }
+  ]
+}

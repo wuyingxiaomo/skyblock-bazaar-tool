@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_EFFICIENCY_5",
+  "displayname": "ENCHANTMENT_EFFICIENCY_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_EFFICIENCY_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_EFFICIENCY_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_EFFICIENCY_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_EFFICIENCY_1:16"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_PESTERMINATOR_2",
+  "displayname": "ENCHANTMENT_PESTERMINATOR_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_PESTERMINATOR_1:2"
+    }
+  ]
+}

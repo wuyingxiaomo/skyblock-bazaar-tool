@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_ENDER_SLAYER_3",
+  "displayname": "ENCHANTMENT_ENDER_SLAYER_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ENDER_SLAYER_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ENDER_SLAYER_1:4"
+    }
+  ]
+}

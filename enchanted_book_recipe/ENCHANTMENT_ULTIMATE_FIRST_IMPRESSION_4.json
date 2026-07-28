@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_FIRST_IMPRESSION_4",
+  "displayname": "ENCHANTMENT_ULTIMATE_FIRST_IMPRESSION_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_FIRST_IMPRESSION_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_FIRST_IMPRESSION_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_FIRST_IMPRESSION_1:8"
+    }
+  ]
+}

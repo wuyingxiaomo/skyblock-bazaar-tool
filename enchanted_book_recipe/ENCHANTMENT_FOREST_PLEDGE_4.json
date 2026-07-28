@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_FOREST_PLEDGE_4",
+  "displayname": "ENCHANTMENT_FOREST_PLEDGE_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_FOREST_PLEDGE_3:2"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_OVERLOAD_4",
+  "displayname": "ENCHANTMENT_OVERLOAD_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_OVERLOAD_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_OVERLOAD_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_OVERLOAD_1:8"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_BANE_OF_ARTHROPODS_2",
+  "displayname": "ENCHANTMENT_BANE_OF_ARTHROPODS_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_BANE_OF_ARTHROPODS_1:2"
+    }
+  ]
+}

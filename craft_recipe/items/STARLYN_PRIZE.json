@@ -1,0 +1,17 @@
+{
+  "itemid": "minecraft:paper",
+  "displayname": "§9Starlyn Prize",
+  "nbttag": "{ExtraAttributes:{id:\"STARLYN_PRIZE\"},HideFlags:254,ItemModel:\"hypixel_skyblock:item/island_relevant/foraging_2/starlyn/starlyn_prize\",display:{Lore:[0:\"§9§lRARE\"],Name:\"§9Starlyn Prize\"}}",
+  "damage": 0,
+  "lore": [
+    "§9§lRARE"
+  ],
+  "internalname": "STARLYN_PRIZE",
+  "clickcommand": "",
+  "crafttext": "",
+  "modver": "Firmament 44.2.0-dev+mc26.1.2+g00fd3323",
+  "infoType": "WIKI_URL",
+  "info": [
+    "https://hypixelskyblock.minecraft.wiki/w/Starlyn_Prize"
+  ]
+}

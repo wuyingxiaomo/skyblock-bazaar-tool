@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_FRAIL_6",
+  "displayname": "ENCHANTMENT_FRAIL_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_FRAIL_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_FRAIL_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_FRAIL_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_FRAIL_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_FRAIL_1:32"
+    }
+  ]
+}

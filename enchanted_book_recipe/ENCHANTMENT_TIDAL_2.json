@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_TIDAL_2",
+  "displayname": "ENCHANTMENT_TIDAL_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TIDAL_1:2"
+    }
+  ]
+}

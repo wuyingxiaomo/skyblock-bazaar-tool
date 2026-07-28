@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_BUG_BLENDER_2",
+  "displayname": "ENCHANTMENT_BUG_BLENDER_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_BUG_BLENDER_1:2"
+    }
+  ]
+}

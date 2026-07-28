@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_FATAL_TEMPO_3",
+  "displayname": "ENCHANTMENT_ULTIMATE_FATAL_TEMPO_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_FATAL_TEMPO_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_FATAL_TEMPO_1:4"
+    }
+  ]
+}

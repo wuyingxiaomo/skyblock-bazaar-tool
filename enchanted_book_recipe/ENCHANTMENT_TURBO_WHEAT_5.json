@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_WHEAT_5",
+  "displayname": "ENCHANTMENT_TURBO_WHEAT_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_WHEAT_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_WHEAT_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_WHEAT_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_WHEAT_1:16"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_PROJECTILE_PROTECTION_5",
+  "displayname": "ENCHANTMENT_PROJECTILE_PROTECTION_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_PROJECTILE_PROTECTION_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_PROJECTILE_PROTECTION_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_PROJECTILE_PROTECTION_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_PROJECTILE_PROTECTION_1:16"
+    }
+  ]
+}

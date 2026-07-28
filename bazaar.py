@@ -1,4 +1,36 @@
+import sys
+
+
+def _dispatch_shared_executable():
+    """Use the Bazaar executable as the entry point for every page and worker."""
+    if "--worker" in sys.argv:
+        from market_worker import main as worker_main
+        worker_main()
+        raise SystemExit
+    if "--page" not in sys.argv:
+        return
+    index = sys.argv.index("--page")
+    page = sys.argv[index + 1] if index + 1 < len(sys.argv) else "bazaar"
+    module = {
+        "bazaar": None,
+        "craft": "craft",
+        "forge": "forge",
+        "enchant": "enchant",
+    }.get(page)
+    if module:
+        imported = __import__(module)
+        imported.main()
+    else:
+        return
+    raise SystemExit
+
+
+_dispatch_shared_executable()
+
 import requests
+from auction import build_bin_index, fetch_auctions
+from bazaar_api import fetch_bazaar_data
+from market_service import read_status, request_refresh
 import tkinter as tk
 from tkinter import ttk
 import json
@@ -6,15 +38,26 @@ import os
 import ctypes
 import ctypes.wintypes
 import threading
+import subprocess
+import sys
+
+from runtime_paths import DATA_DIR, SOURCE_DIR, ensure_data_dir
 
 # ===================== 配置区 =====================
 BAZAAR_URL = "https://api.hypixel.net/skyblock/bazaar"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Edge/150.0.0.0"
 }
-CONFIG_FILE = "config.json"
-DATA_CACHE_FILE = "bazaar_data.json"
+APP_DIR = DATA_DIR
+SOURCE_APP_DIR = SOURCE_DIR
+CONFIG_FILE = os.path.join(APP_DIR, "bazaar_config.json")
+DATA_CACHE_FILE = os.path.join(APP_DIR, "bazaar_data.json")
 HYPIXEL_API_KEY = ""
+
+
+def _config_read_path():
+    """只读取 bazaar_config 文件夹中的当前配置。"""
+    return CONFIG_FILE
 
 def prompt_api_key(parent=None, msg="", current_key=""):
     """弹出输入API Key的对话框，返回用户输入的key（空字符串表示取消）"""
@@ -59,27 +102,31 @@ def prompt_api_key(parent=None, msg="", current_key=""):
     return result[0]
 
 def save_api_key(key):
-    """将 API Key 保存到 config.json（不覆盖其他字段）"""
+    """将 API Key 保存到 bazaar_config.json（不覆盖其他字段）"""
     cfg = {}
-    if os.path.exists(CONFIG_FILE):
+    ensure_data_dir()
+    config_path = _config_read_path()
+    if os.path.exists(config_path):
         try:
-            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+            with open(config_path, "r", encoding="utf-8") as f:
                 cfg = json.load(f)
         except:
             pass
     cfg["api_key"] = key
     try:
+        ensure_data_dir()
         with open(CONFIG_FILE, "w", encoding="utf-8") as f:
             json.dump(cfg, f, ensure_ascii=False, indent=2)
     except:
         pass
 
 def load_api_key():
-    """从 config.json 读取 API Key"""
+    """从 bazaar_config.json 读取 API Key"""
     global HYPIXEL_API_KEY
-    if os.path.exists(CONFIG_FILE):
+    config_path = _config_read_path()
+    if os.path.exists(config_path):
         try:
-            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+            with open(config_path, "r", encoding="utf-8") as f:
                 cfg = json.load(f)
             if cfg.get("api_key"):
                 HYPIXEL_API_KEY = cfg["api_key"]
@@ -101,12 +148,44 @@ def open_api_dialog():
         save_api_key(key)
         status_var.set("API Key 已保存" if key else "API Key 已清空")
 
+def open_craft():
+    """关闭 Bazaar 界面并打开 Craft 界面。"""
+    try:
+        command = [sys.executable, "--page", "craft"] if getattr(sys, "frozen", False) else [sys.executable, os.path.join(SOURCE_APP_DIR, "craft.py")]
+        subprocess.Popen(command, cwd=APP_DIR)
+        root.destroy()
+    except Exception as e:
+        status_var.set(f"打开 Craft 失败：{e}")
+
+
+def open_forge():
+    """关闭 Bazaar 界面并打开 Forge 界面。"""
+    try:
+        command = [sys.executable, "--page", "forge"] if getattr(sys, "frozen", False) else [sys.executable, os.path.join(SOURCE_APP_DIR, "forge.py")]
+        subprocess.Popen(command, cwd=APP_DIR)
+        root.destroy()
+    except Exception as e:
+        status_var.set(f"打开 Forge 失败：{e}")
+
+
+def open_enchant():
+    """关闭 Bazaar 界面并打开 Enchant 界面。"""
+    try:
+        command = [sys.executable, "--page", "enchant"] if getattr(sys, "frozen", False) else [sys.executable, os.path.join(SOURCE_APP_DIR, "enchant.py")]
+        subprocess.Popen(command, cwd=APP_DIR)
+        root.destroy()
+    except Exception as e:
+        status_var.set(f"打开 Enchant 失败：{e}")
+
 # ==================================================
 
 # 全局状态
 sort_key = "pct"
 sort_reverse = True
 item_data_cache = []
+auction_index = {}
+auction_loading = False
+bazaar_loading = False
 is_topmost = False
 
 # 单位换算
@@ -146,9 +225,12 @@ filter_max_var_map = {}   # 筛选最高值 StringVar（持久化，与控件无
 unit_var_map = {}         # 单位选择 StringVar（持久化，与控件无关）
 col_order = []            # 列排列顺序（持久化，可拖拽重排）
 col_width_map = {}        # 列宽度（持久化，拖拽调整后保存）
+filter_sources = {"bazaar": True, "auction": True}
 setting_win_geometry = None  # 参数面板位置大小（持久化）
 pw_sash_positions = None    # 参数面板三栏分隔位置（持久化）
 panel_scroll = {}           # 参数面板三栏滚动位置（持久化）
+panel_col_widths = {"check": 150, "field": 220, "min": 130, "max": 130, "unit": 100}
+panel_column_order = ["check", "field", "min", "max", "unit"]
 tree_scroll_x = 0           # 主表格横向滚动位置（持久化）
 tree_scroll_y = 0           # 主表格纵向滚动位置（持久化）
 btn_order = []              # 顶部按钮排列顺序（持久化）
@@ -252,10 +334,16 @@ def fetch_data():
 
 # 筛选逻辑（跳过物品ID，输入纯数字由单位决定量级）
 def filter_data(raw_list):
+    # Bazaar 页面只有 Bazaar 数据，没有可供展示的 AH 行。
+    # 因此未选择 Bazaar 时，不能继续显示 Bazaar 缓存中的物品。
+    if not filter_sources.get("bazaar", True):
+        return []
     cond_list = []
     for meta in col_meta:
         cid = meta["cid"]
         if not meta["is_num"]:
+            continue
+        if not filter_sources.get("bazaar", True):
             continue
         unit = unit_var_map[cid].get()
         scale = UNIT_SCALE.get(unit, 1)
@@ -284,23 +372,61 @@ def filter_data(raw_list):
     return filtered
 
 def refresh_table():
-    global item_data_cache
-    tree.delete(*tree.get_children())
-    status_var.set("正在请求数据...")
-    root.update_idletasks()
-    data, msg = fetch_data()
-    if msg != "success":
-        status_var.set(msg)
+    refresh_bazaar_data()
+    refresh_auction_data()
+
+
+def refresh_bazaar_data():
+    global bazaar_loading, item_data_cache
+    if bazaar_loading:
         return
-    item_data_cache = data
-    # 保存数据到本地缓存文件
-    try:
-        with open(DATA_CACHE_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False)
-    except Exception as e:
-        status_var.set(f"数据缓存保存失败：{e}")
-    apply_filter_sort()
-    status_var.set(f"原始共{len(data)}条，筛选后{len(tree.get_children())}条（已更新缓存）")
+    bazaar_loading = True
+    status_var.set("正在后台请求 Bazaar...")
+
+    def worker():
+        data, message = fetch_bazaar_data(HYPIXEL_API_KEY)
+
+        def finish():
+            global bazaar_loading, item_data_cache
+            bazaar_loading = False
+            if message == "success":
+                item_data_cache = data
+                apply_filter_sort(save_current_widths=False)
+                status_var.set(f"Bazaar 数据已更新：{len(data)} 条")
+            else:
+                status_var.set(message)
+
+        try:
+            root.after(0, finish)
+        except tk.TclError:
+            pass
+
+    threading.Thread(target=worker, daemon=True).start()
+
+
+def refresh_auction_data():
+    global auction_loading
+    if auction_loading:
+        return
+    auction_loading = True
+    status_var.set("正在后台请求 Auction House...")
+
+    def worker():
+        auctions, message = fetch_auctions(HYPIXEL_API_KEY)
+        index = build_bin_index(auctions)
+
+        def finish():
+            global auction_index, auction_loading
+            auction_index = index
+            auction_loading = False
+            status_var.set(message)
+
+        try:
+            root.after(0, finish)
+        except tk.TclError:
+            pass
+
+    threading.Thread(target=worker, daemon=True).start()
 
 def load_cached_data():
     """启动时加载本地缓存数据，若无缓存则返回空列表"""
@@ -320,10 +446,10 @@ def get_visible_cols():
             vis.append(cid)
     return vis
 
-def apply_filter_sort():
+def apply_filter_sort(save_current_widths=True):
     global item_data_cache, sort_key, sort_reverse
     # 先保存当前列宽（用户可能已拖拽调整），仅在树有数据时保存，避免空树默认宽度覆盖已加载的值
-    if len(tree.get_children()) > 0:
+    if save_current_widths and len(tree.get_children()) > 0:
         for cid in col_width_map:
             try:
                 col_width_map[cid] = tree.column(cid, "width")
@@ -388,7 +514,7 @@ def refresh_all_scrollregion():
     canvas_unit.configure(scrollregion=canvas_unit.bbox("all"))
 
 # ===================== 参数设置面板（可拖拽调整三栏宽度） =====================
-def open_param_panel():
+def _legacy_open_param_panel():
     global setting_win, inner_check, inner_filter, inner_unit, canvas_check, canvas_filter, canvas_unit
     if setting_win and setting_win.winfo_exists():
         setting_win.lift()
@@ -403,8 +529,25 @@ def open_param_panel():
     setting_win.transient(root)
     setting_win.grab_set()
 
-    def on_setting_close():
+    panel_snapshot = {
+        "columns": {cid: col_var_map[cid].get() for cid in col_cid_list},
+        "filter_min": {cid: filter_min_var_map[cid].get() for cid in col_cid_list},
+        "filter_max": {cid: filter_max_var_map[cid].get() for cid in col_cid_list},
+        "units": {cid: unit_var_map[cid].get() for cid in col_cid_list},
+    }
+
+    def restore_panel_snapshot():
+        for cid in col_cid_list:
+            col_var_map[cid].set(panel_snapshot["columns"][cid])
+            filter_min_var_map[cid].set(panel_snapshot["filter_min"][cid])
+            filter_max_var_map[cid].set(panel_snapshot["filter_max"][cid])
+            unit_var_map[cid].set(panel_snapshot["units"][cid])
+        apply_filter_sort(save_current_widths=False)
+
+    def on_setting_close(discard_changes=False):
         global setting_win_geometry, pw_sash_positions, panel_scroll
+        if discard_changes:
+            restore_panel_snapshot()
         try:
             setting_win_geometry = setting_win.geometry()
         except:
@@ -425,7 +568,6 @@ def open_param_panel():
             }
         except:
             pass
-        save_panel_config()
         setting_win.destroy()
 
     # 使用 PanedWindow 实现可拖拽调整三栏宽度
@@ -531,7 +673,7 @@ def open_param_panel():
     btn_frame = ttk.Frame(setting_win)
     btn_frame.pack(pady=12)
     ttk.Button(btn_frame, text="应用筛选并关闭", command=lambda: (apply_filter_sort(), on_setting_close())).pack(side="left", padx=8)
-    ttk.Button(btn_frame, text="仅关闭", command=on_setting_close).pack(side="left", padx=8)
+    ttk.Button(btn_frame, text="仅关闭", command=lambda: on_setting_close(True)).pack(side="left", padx=8)
 
     sync_visible_widgets()
 
@@ -567,9 +709,10 @@ def save_panel_config():
     global setting_win_geometry, pw_sash_positions
     # 读取已有配置（保留其他字段如窗口位置、排序等）
     cfg = {}
-    if os.path.exists(CONFIG_FILE):
+    config_path = _config_read_path()
+    if os.path.exists(config_path):
         try:
-            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+            with open(config_path, "r", encoding="utf-8") as f:
                 cfg = json.load(f)
         except:
             pass
@@ -578,9 +721,12 @@ def save_panel_config():
     cfg["filter_min"] = {}
     cfg["filter_max"] = {}
     cfg["units"] = {}
+    cfg["col_order"] = list(col_order)
     cfg["setting_win_geometry"] = setting_win_geometry
     cfg["pw_sash_positions"] = pw_sash_positions
     cfg["panel_scroll"] = panel_scroll
+    cfg["panel_col_widths"] = dict(panel_col_widths)
+    cfg["panel_column_order"] = list(panel_column_order)
     cfg["btn_order"] = btn_order
     cfg["shortcut_map"] = dict(shortcut_map)
     cfg["shortcut_global"] = dict(shortcut_global)
@@ -590,6 +736,7 @@ def save_panel_config():
         cfg["filter_min"][cid] = filter_min_var_map[cid].get()
         cfg["filter_max"][cid] = filter_max_var_map[cid].get()
         cfg["units"][cid] = unit_var_map[cid].get()
+    ensure_data_dir()
     try:
         with open(CONFIG_FILE, "w", encoding="utf-8") as f:
             json.dump(cfg, f, ensure_ascii=False, indent=2)
@@ -629,6 +776,7 @@ def save_config():
         "setting_win_geometry": setting_win_geometry,
         "pw_sash_positions": pw_sash_positions,
         "panel_scroll": panel_scroll,
+        "panel_col_widths": dict(panel_col_widths),
         "top_scroll_pos": top_scroll_pos,
         "tree_scroll_x": tree_scroll_x,
         "tree_scroll_y": tree_scroll_y,
@@ -636,25 +784,28 @@ def save_config():
         "filter_min": {},
         "filter_max": {},
         "units": {},
-        "col_widths": dict(col_width_map)
+        "col_widths": dict(col_width_map),
+        "filter_sources": dict(filter_sources)
     }
     for cid in col_cid_list:
         cfg["columns"][cid] = col_var_map[cid].get()
         cfg["filter_min"][cid] = filter_min_var_map[cid].get()
         cfg["filter_max"][cid] = filter_max_var_map[cid].get()
         cfg["units"][cid] = unit_var_map[cid].get()
+    ensure_data_dir()
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
         json.dump(cfg, f, ensure_ascii=False, indent=2)
-    status_var.set("配置已保存到 config.json")
+    status_var.set("配置已保存到 bazaar_config.json")
 
 def load_config():
-    global sort_key, sort_reverse, col_order, setting_win_geometry, is_topmost, pw_sash_positions, panel_scroll
+    global sort_key, sort_reverse, col_order, setting_win_geometry, is_topmost, pw_sash_positions, panel_scroll, panel_col_widths, panel_column_order, filter_sources
     global tree_scroll_x, tree_scroll_y
-    if not os.path.exists(CONFIG_FILE):
+    config_path = _config_read_path()
+    if not os.path.exists(config_path):
         status_var.set("无保存配置文件")
         return
     try:
-        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+        with open(config_path, "r", encoding="utf-8") as f:
             cfg = json.load(f)
         root.geometry(f"{cfg['window']['w']}x{cfg['window']['h']}+{cfg['window']['x']}+{cfg['window']['y']}")
         sort_key = cfg["sort"]["key"]
@@ -664,7 +815,8 @@ def load_config():
             col_order[:] = cfg["col_order"]
         # 加载按钮顺序（自动补全新增的按钮）
         if "btn_order" in cfg:
-            btn_order[:] = cfg["btn_order"]
+            # Craft 界面保存时使用 bazaar 作为返回按钮的 ID，回到本界面时映射回 craft
+            btn_order[:] = ["craft" if bid == "bazaar" else bid for bid in cfg["btn_order"]]
             # 补全旧配置中缺失的新按钮
             for bid in _default_btn_order:
                 if bid not in btn_order:
@@ -693,6 +845,11 @@ def load_config():
         if "col_widths" in cfg:
             for cid, w in cfg["col_widths"].items():
                 col_width_map[cid] = w
+        stored_sources = cfg.get("filter_sources", {})
+        if isinstance(stored_sources, dict):
+            for source in filter_sources:
+                if source in stored_sources:
+                    filter_sources[source] = bool(stored_sources[source])
         # 加载参数面板位置大小
         if "setting_win_geometry" in cfg and cfg["setting_win_geometry"]:
             setting_win_geometry = cfg["setting_win_geometry"]
@@ -702,6 +859,13 @@ def load_config():
         # 加载参数面板三栏滚动位置
         if "panel_scroll" in cfg and cfg["panel_scroll"]:
             panel_scroll = cfg["panel_scroll"]
+        if "panel_col_widths" in cfg and isinstance(cfg["panel_col_widths"], dict):
+            for key, width in cfg["panel_col_widths"].items():
+                if key in panel_col_widths and isinstance(width, (int, float)):
+                    panel_col_widths[key] = width
+        if isinstance(cfg.get("panel_column_order"), list):
+            panel_column_order[:] = [key for key in cfg["panel_column_order"] if key in panel_col_widths]
+            panel_column_order.extend(key for key in panel_col_widths if key not in panel_column_order)
         # 加载主表格滚动位置
         if "tree_scroll_x" in cfg:
             tree_scroll_x = cfg["tree_scroll_x"]
@@ -726,7 +890,7 @@ def load_config():
             elif u == "B":
                 u = "b"
             unit_var_map[cid].set(u)
-        apply_filter_sort()
+        apply_filter_sort(save_current_widths=False)
         # 恢复主表格滚动位置（延迟等待渲染完成）
         _tsx, _tsy = tree_scroll_x, tree_scroll_y
         def _restore_tree_scroll():
@@ -741,14 +905,17 @@ def load_config():
         status_var.set(f"加载配置失败:{str(e)}")
 
 def reset_all_default():
-    global sort_key, sort_reverse, col_order, is_topmost, pw_sash_positions, panel_scroll
+    global sort_key, sort_reverse, col_order, is_topmost, pw_sash_positions, panel_scroll, panel_col_widths, panel_column_order, filter_sources
     global tree_scroll_x, tree_scroll_y, btn_order, shortcut_map, shortcut_global
     global setting_win_geometry, shortcut_win_geometry
     sort_key = "pct"
     sort_reverse = True
+    filter_sources = {"bazaar": True, "auction": True}
     is_topmost = False
     pw_sash_positions = None
     panel_scroll = {}
+    panel_col_widths = {"check": 150, "field": 220, "min": 130, "max": 130, "unit": 100}
+    panel_column_order[:] = ["check", "field", "min", "max", "unit"]
     tree_scroll_x = 0
     tree_scroll_y = 0
     btn_order[:] = list(_default_btn_order)
@@ -771,7 +938,7 @@ def reset_all_default():
         col_width_map[cid] = _default_widths.get(cid, 95)
     root.geometry("1400x700")
     rebuild_button_bar()
-    apply_filter_sort()
+    apply_filter_sort(save_current_widths=False)
     status_var.set("已重置全部设置为默认")
 
 # ===================== 置顶功能 =====================
@@ -785,7 +952,7 @@ def toggle_topmost():
 
 # ===================== 快捷键功能 =====================
 # 可设置快捷键的按钮ID列表（不含api按钮）
-_SHORTCUT_ELIGIBLE = ["refresh", "param", "filter", "save", "load", "reset", "topmost"]
+_SHORTCUT_ELIGIBLE = ["refresh", "param", "save", "load", "reset", "topmost"]
 
 def _key_event_to_str(event):
     """将 tkinter 键盘事件转为快捷键字符串，如 SHIFT+F3"""
@@ -1427,9 +1594,421 @@ def show_right_menu(event):
             tree.selection_set(row)
             copy_item_id()
 
+def open_param_panel():
+    """打开统一滚动、可拖动调整列宽的参数面板。"""
+    global setting_win, setting_win_geometry, panel_scroll, panel_col_widths
+    if setting_win and setting_win.winfo_exists():
+        setting_win.lift()
+        return
+    setting_win = tk.Toplevel(root)
+    setting_win.title("参数设置面板")
+    setting_win.geometry(setting_win_geometry or "1050x700")
+    setting_win.transient(root)
+    setting_win.grab_set()
+
+    snapshot = {
+        "columns": {cid: col_var_map[cid].get() for cid in col_cid_list},
+        "filter_min": {cid: filter_min_var_map[cid].get() for cid in col_cid_list},
+        "filter_max": {cid: filter_max_var_map[cid].get() for cid in col_cid_list},
+        "units": {cid: unit_var_map[cid].get() for cid in col_cid_list},
+    }
+    columns = ["check", "field", "min", "max", "unit"]
+    headers = ["显示", "字段", "最低值", "最高值", "单位"]
+    body = ttk.Frame(setting_win)
+    body.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=10, pady=(10, 0))
+
+    # 使用原生 Treeview 表头，直接复用主界面的列分隔线拖拽行为。
+    # 参数输入区仍然使用 Canvas，这样可以保留可编辑控件和一个共享的纵向滚动条。
+    header = ttk.Treeview(body, columns=columns, show="headings", height=1, selectmode="none")
+    header.pack(side=tk.TOP, fill=tk.X)
+    content = ttk.Frame(body)
+    content.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+    canvas = tk.Canvas(content, highlightthickness=0)
+    scroll_y = ttk.Scrollbar(content, orient=tk.VERTICAL, command=canvas.yview)
+    scroll_x = ttk.Scrollbar(content, orient=tk.HORIZONTAL)
+    inner = ttk.Frame(canvas)
+    inner_window = canvas.create_window((0, 0), window=inner, anchor="nw")
+    canvas.configure(yscrollcommand=scroll_y.set)
+    inner.bind("<Configure>", lambda _event: canvas.configure(scrollregion=canvas.bbox("all")))
+    scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
+    scroll_x.pack(side=tk.BOTTOM, fill=tk.X)
+    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    def shared_xscroll(*args):
+        canvas.xview(*args)
+        header.xview(*args)
+
+    def set_shared_xscroll(first, last):
+        scroll_x.set(first, last)
+
+    scroll_x.configure(command=shared_xscroll)
+    canvas.configure(xscrollcommand=set_shared_xscroll)
+
+    def apply_column_widths():
+        try:
+            if not inner.winfo_exists():
+                return
+        except tk.TclError:
+            return
+        for index, key in enumerate(columns):
+            inner.columnconfigure(index, minsize=int(panel_col_widths[key]), weight=0)
+
+    for key, title in zip(columns, headers):
+        header.heading(key, text=title)
+        header.column(key, width=int(panel_col_widths[key]), minwidth=70, stretch=False, anchor="w")
+
+    resize_sync = {"pending": False}
+
+    def sync_header_widths(_event=None):
+        resize_sync["pending"] = False
+        try:
+            if not header.winfo_exists() or not inner.winfo_exists():
+                return
+            for key in columns:
+                panel_col_widths[key] = max(70, int(header.column(key, "width")))
+            apply_column_widths()
+            canvas.configure(scrollregion=canvas.bbox("all"))
+        except tk.TclError:
+            pass
+
+    def schedule_header_sync(_event=None):
+        if resize_sync["pending"]:
+            return
+        resize_sync["pending"] = True
+        try:
+            setting_win.after_idle(sync_header_widths)
+        except tk.TclError:
+            resize_sync["pending"] = False
+
+    header.bind("<B1-Motion>", schedule_header_sync)
+    header.bind("<ButtonRelease-1>", sync_header_widths)
+
+    for index, meta in enumerate(col_meta, 1):
+        cid = meta["cid"]
+        ttk.Checkbutton(inner, variable=col_var_map[cid], command=lambda: apply_filter_sort(save_current_widths=False)).grid(row=index, column=0, sticky="w", padx=5, pady=5)
+        ttk.Label(inner, text=meta["name"], anchor="w").grid(row=index, column=1, sticky="w", padx=5, pady=5)
+        if meta["is_num"]:
+            ttk.Entry(inner, textvariable=filter_min_var_map[cid]).grid(row=index, column=2, sticky="ew", padx=5, pady=5)
+            ttk.Entry(inner, textvariable=filter_max_var_map[cid]).grid(row=index, column=3, sticky="ew", padx=5, pady=5)
+            ttk.Combobox(inner, values=list(UNIT_SCALE), state="readonly", textvariable=unit_var_map[cid]).grid(row=index, column=4, sticky="ew", padx=5, pady=5)
+        else:
+            ttk.Label(inner, text="不支持筛选", foreground="#888").grid(row=index, column=2, columnspan=2, sticky="w", padx=5, pady=5)
+            ttk.Label(inner, text="—", foreground="#888").grid(row=index, column=4, sticky="w", padx=5, pady=5)
+    apply_column_widths()
+
+    def restore_snapshot():
+        for cid in col_cid_list:
+            col_var_map[cid].set(snapshot["columns"][cid])
+            filter_min_var_map[cid].set(snapshot["filter_min"][cid])
+            filter_max_var_map[cid].set(snapshot["filter_max"][cid])
+            unit_var_map[cid].set(snapshot["units"][cid])
+        apply_filter_sort(save_current_widths=False)
+
+    def close_panel(discard=False):
+        global setting_win, setting_win_geometry, panel_scroll
+        if discard:
+            restore_snapshot()
+        sync_header_widths()
+        setting_win_geometry = setting_win.geometry()
+        panel_scroll = {"x": canvas.xview()[0], "y": canvas.yview()[0]}
+        setting_win.destroy()
+        setting_win = None
+
+    buttons = ttk.Frame(setting_win)
+    buttons.pack(side=tk.BOTTOM, pady=(8, 12))
+    ttk.Button(buttons, text="应用筛选并关闭", command=lambda: (apply_filter_sort(), close_panel())).pack(side=tk.LEFT, padx=8)
+    ttk.Button(buttons, text="仅关闭", command=lambda: close_panel(True)).pack(side=tk.LEFT, padx=8)
+    apply_filter_sort(save_current_widths=False)
+    def restore_panel_scroll():
+        try:
+            x_pos = panel_scroll.get("x", 0)
+            y_pos = panel_scroll.get("y", 0)
+            canvas.xview_moveto(x_pos)
+            header.xview_moveto(x_pos)
+            canvas.yview_moveto(y_pos)
+        except tk.TclError:
+            pass
+    root.after(200, restore_panel_scroll)
+
+
+# 恢复为统一 Canvas 参数面板：普通表头拖动调整列宽，控件外观保持原样。
+def open_param_panel():
+    global setting_win, setting_win_geometry, panel_scroll, panel_col_widths, col_order, panel_column_order, filter_sources
+    if setting_win and setting_win.winfo_exists():
+        setting_win.lift()
+        return
+    setting_win = tk.Toplevel(root)
+    setting_win.title("参数设置面板")
+    setting_win.geometry(setting_win_geometry or "1050x700")
+    setting_win.transient(root)
+    setting_win.grab_set()
+
+    panel_order = list(col_order)
+    columns = list(panel_column_order)
+    snapshot = {
+        "order": list(panel_order),
+        "panel_columns": list(columns),
+        "columns": {cid: col_var_map[cid].get() for cid in col_cid_list},
+        "filter_min": {cid: filter_min_var_map[cid].get() for cid in col_cid_list},
+        "filter_max": {cid: filter_max_var_map[cid].get() for cid in col_cid_list},
+        "units": {cid: unit_var_map[cid].get() for cid in col_cid_list},
+        "filter_sources": dict(filter_sources),
+    }
+    body = ttk.Frame(setting_win)
+    body.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=10, pady=(10, 0))
+    canvas = tk.Canvas(body)
+    scroll_y = ttk.Scrollbar(body, orient=tk.VERTICAL, command=canvas.yview)
+    scroll_x = ttk.Scrollbar(body, orient=tk.HORIZONTAL, command=canvas.xview)
+    inner = ttk.Frame(canvas)
+    canvas.create_window((0, 0), window=inner, anchor="nw")
+    canvas.configure(yscrollcommand=scroll_y.set, xscrollcommand=scroll_x.set)
+    inner.bind("<Configure>", lambda _event: canvas.configure(scrollregion=canvas.bbox("all")))
+    scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
+    scroll_x.pack(side=tk.BOTTOM, fill=tk.X)
+    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    columns = list(panel_column_order)
+    header_names = {"check": "显示", "field": "字段", "min": "最低值", "max": "最高值", "unit": "单位"}
+    resize_state = {"key": None, "start_x": 0, "start_width": 0}
+
+    def apply_column_widths():
+        try:
+            if not inner.winfo_exists():
+                return
+        except tk.TclError:
+            return
+        for index, key in enumerate(columns):
+            inner.columnconfigure(index, minsize=int(panel_col_widths[key]), weight=0)
+
+    def start_resize(event, index):
+        resize_state.update(key=index, start_x=event.x_root, start_width=panel_col_widths[index])
+        root.bind_all("<B1-Motion>", resize_column)
+        root.bind_all("<ButtonRelease-1>", stop_resize)
+
+    def resize_column(event):
+        key = resize_state["key"]
+        if key is None:
+            return
+        panel_col_widths[key] = max(70, resize_state["start_width"] + event.x_root - resize_state["start_x"])
+        apply_column_widths()
+
+    def stop_resize(_event):
+        resize_state["key"] = None
+        root.unbind_all("<B1-Motion>")
+        root.unbind_all("<ButtonRelease-1>")
+
+    header_widgets = {}
+    selected_panel_column = [None]
+    column_menu = tk.Menu(setting_win, tearoff=0)
+
+    def regrid_panel():
+        for index, key in enumerate(columns):
+            header_widgets[key].grid_configure(row=0, column=index)
+        for row, row_cid in enumerate(panel_order, 1):
+            for widget, key, columnspan in row_widgets[row_cid]:
+                widget.grid_configure(row=row, column=columns.index(key), columnspan=columnspan)
+        apply_column_widths()
+
+    def move_panel_column(delta):
+        key = selected_panel_column[0]
+        if key not in columns:
+            return
+        index = columns.index(key)
+        target = index + delta
+        if 0 <= target < len(columns):
+            columns[index], columns[target] = columns[target], columns[index]
+            panel_column_order[:] = columns
+            regrid_panel()
+
+    column_menu.add_command(label="← 左移此列", command=lambda: move_panel_column(-1))
+    column_menu.add_command(label="→ 右移此列", command=lambda: move_panel_column(1))
+
+    def show_panel_column_menu(event, key):
+        selected_panel_column[0] = key
+        index = columns.index(key)
+        column_menu.entryconfigure(0, state=tk.NORMAL if index > 0 else tk.DISABLED)
+        column_menu.entryconfigure(1, state=tk.NORMAL if index < len(columns) - 1 else tk.DISABLED)
+        column_menu.tk_popup(event.x_root, event.y_root)
+
+    row_widgets = {}
+    selected_row = [None]
+    row_menu = tk.Menu(setting_win, tearoff=0)
+
+    def move_row(delta):
+        cid = selected_row[0]
+        if cid not in panel_order:
+            return
+        old_index = panel_order.index(cid)
+        new_index = old_index + delta
+        if not 0 <= new_index < len(panel_order):
+            return
+        panel_order[old_index], panel_order[new_index] = panel_order[new_index], panel_order[old_index]
+        col_order[:] = panel_order
+        for row, row_cid in enumerate(panel_order, 1):
+            for widget, column, columnspan in row_widgets[row_cid]:
+                widget.grid_configure(row=row, column=column, columnspan=columnspan)
+        apply_filter_sort(save_current_widths=False)
+
+    row_menu.add_command(label="↑ 上移", command=lambda: move_row(-1))
+    row_menu.add_command(label="↓ 下移", command=lambda: move_row(1))
+
+    def show_row_menu(event, cid):
+        selected_row[0] = cid
+        index = panel_order.index(cid)
+        row_menu.entryconfigure(0, state=tk.NORMAL if index > 0 else tk.DISABLED)
+        row_menu.entryconfigure(1, state=tk.NORMAL if index < len(panel_order) - 1 else tk.DISABLED)
+        row_menu.tk_popup(event.x_root, event.y_root)
+
+    def bind_row_menu(widget, cid):
+        widget.bind("<Button-3>", lambda event, selected=cid: show_row_menu(event, selected), add="+")
+
+    meta_by_cid = {meta["cid"]: meta for meta in col_meta}
+    for index, key in enumerate(columns):
+        header = tk.Label(inner, text=header_names[key], anchor="w", relief="raised", cursor="sb_h_double_arrow")
+        header.grid(row=0, column=index, sticky="ew", padx=1, pady=(1, 5))
+        header.bind("<ButtonPress-1>", lambda event, selected=key: start_resize(event, selected))
+        header.bind("<Button-3>", lambda event, selected=key: show_panel_column_menu(event, selected), add="+")
+        header_widgets[key] = header
+
+    for index, cid in enumerate(panel_order, 1):
+        meta = meta_by_cid[cid]
+        row_widgets[cid] = []
+        check = ttk.Checkbutton(inner, variable=col_var_map[cid], command=lambda: apply_filter_sort(save_current_widths=False))
+        check.grid(row=index, column=columns.index("check"), sticky="w", padx=5, pady=5)
+        row_widgets[cid].append((check, "check", 1))
+        field = ttk.Label(inner, text=meta["name"], anchor="w")
+        field.grid(row=index, column=columns.index("field"), sticky="w", padx=5, pady=5)
+        row_widgets[cid].append((field, "field", 1))
+        if meta["is_num"]:
+            minimum = ttk.Entry(inner, textvariable=filter_min_var_map[cid])
+            minimum.grid(row=index, column=columns.index("min"), sticky="ew", padx=5, pady=5)
+            maximum = ttk.Entry(inner, textvariable=filter_max_var_map[cid])
+            maximum.grid(row=index, column=columns.index("max"), sticky="ew", padx=5, pady=5)
+            unit = ttk.Combobox(inner, values=list(UNIT_SCALE), state="readonly", textvariable=unit_var_map[cid])
+            unit.grid(row=index, column=columns.index("unit"), sticky="ew", padx=5, pady=5)
+            row_widgets[cid].extend(((minimum, "min", 1), (maximum, "max", 1), (unit, "unit", 1)))
+        else:
+            unsupported = ttk.Label(inner, text="不支持筛选", foreground="#888")
+            unsupported.grid(row=index, column=columns.index("min"), sticky="w", padx=5, pady=5)
+            dash = ttk.Label(inner, text="—", foreground="#888")
+            dash.grid(row=index, column=columns.index("unit"), sticky="w", padx=5, pady=5)
+            row_widgets[cid].extend(((unsupported, "min", 1), (dash, "unit", 1)))
+        for widget, _column, _columnspan in row_widgets[cid]:
+            bind_row_menu(widget, cid)
+    apply_column_widths()
+
+    source_vars = {
+        source: tk.BooleanVar(value=filter_sources.get(source, True))
+        for source in ("bazaar", "auction")
+    }
+
+    def commit_sources():
+        for source, variable in source_vars.items():
+            filter_sources[source] = bool(variable.get())
+
+    def refresh_from_source_toggle():
+        commit_sources()
+        apply_filter_sort(save_current_widths=False)
+
+    live_traces = []
+    for cid in col_cid_list:
+        for variable in (filter_min_var_map[cid], filter_max_var_map[cid], unit_var_map[cid]):
+            trace_id = variable.trace_add("write", lambda *_args: apply_filter_sort(save_current_widths=False))
+            live_traces.append((variable, trace_id))
+
+    def restore_snapshot():
+        panel_order[:] = snapshot["order"]
+        columns[:] = snapshot["panel_columns"]
+        panel_column_order[:] = columns
+        regrid_panel()
+        col_order[:] = panel_order
+        for cid in col_cid_list:
+            col_var_map[cid].set(snapshot["columns"][cid])
+            filter_min_var_map[cid].set(snapshot["filter_min"][cid])
+            filter_max_var_map[cid].set(snapshot["filter_max"][cid])
+            unit_var_map[cid].set(snapshot["units"][cid])
+        filter_sources.update(snapshot["filter_sources"])
+        for source, variable in source_vars.items():
+            variable.set(filter_sources[source])
+        apply_filter_sort(save_current_widths=False)
+
+    def close_panel(discard=False):
+        global setting_win, setting_win_geometry, panel_scroll
+        if discard:
+            restore_snapshot()
+        for variable, trace_id in live_traces:
+            try:
+                variable.trace_remove("write", trace_id)
+            except tk.TclError:
+                pass
+        stop_resize(None)
+        setting_win_geometry = setting_win.geometry()
+        panel_scroll = {"x": canvas.xview()[0], "y": canvas.yview()[0]}
+        setting_win.destroy()
+        setting_win = None
+
+    source_frame = ttk.Frame(setting_win)
+    source_frame.pack(side=tk.BOTTOM, pady=(4, 0))
+    ttk.Label(source_frame, text="筛选数据源：").pack(side=tk.LEFT, padx=(0, 8))
+    ttk.Checkbutton(source_frame, text="Bazaar", variable=source_vars["bazaar"], command=refresh_from_source_toggle).pack(side=tk.LEFT, padx=8)
+    ttk.Checkbutton(source_frame, text="Auction House", variable=source_vars["auction"], command=refresh_from_source_toggle).pack(side=tk.LEFT, padx=8)
+    buttons = ttk.Frame(setting_win)
+    buttons.pack(side=tk.BOTTOM, pady=(8, 12))
+    ttk.Button(buttons, text="应用筛选并关闭", command=lambda: (commit_sources(), apply_filter_sort(), close_panel())).pack(side=tk.LEFT, padx=8)
+    ttk.Button(buttons, text="仅关闭", command=lambda: close_panel(True)).pack(side=tk.LEFT, padx=8)
+    apply_filter_sort(save_current_widths=False)
+    root.after(200, lambda: (canvas.xview_moveto(panel_scroll.get("x", 0)), canvas.yview_moveto(panel_scroll.get("y", 0))))
+
+
+# 使用独立市场进程，切换界面时 BZ/AH 请求不会被原窗口中断。
+def _load_cached_auction_index():
+    path = os.path.join(APP_DIR, "auction_data.json")
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            value = json.load(file)
+        auctions = value.get("auctions", []) if isinstance(value, dict) else value
+        return build_bin_index(auctions if isinstance(auctions, list) else [])
+    except Exception:
+        return {}
+
+
+def _poll_market_result(source):
+    status = read_status()
+    if status.get("state") in {"queued", "running"}:
+        root.after(500, lambda: _poll_market_result(source))
+        return
+    global item_data_cache, auction_index
+    if source in {"bazaar", "all"}:
+        cached = load_cached_data()
+        if cached:
+            item_data_cache = cached
+            apply_filter_sort(save_current_widths=False)
+    if source in {"auction", "all"}:
+        auction_index = _load_cached_auction_index()
+    status_var.set(status.get("message") or "市场数据请求完成")
+
+
+def refresh_bazaar_data():
+    request_refresh("bazaar")
+    status_var.set("已提交 BZ 请求，后台继续执行")
+    root.after(300, lambda: _poll_market_result("bazaar"))
+
+
+def refresh_auction_data():
+    request_refresh("auction")
+    status_var.set("已提交 AH 请求，后台继续执行")
+    root.after(300, lambda: _poll_market_result("auction"))
+
+
+def refresh_table():
+    request_refresh("all")
+    status_var.set("已提交 BZ + AH 请求，后台继续执行")
+    root.after(300, lambda: _poll_market_result("all"))
+
+
 # ===================== 主窗口初始化 =====================
 root = tk.Tk()
-root.title("Skyblock Bazaar 精简主界面")
+root.title("Skyblock Bazaar 主界面")
 root.geometry("1400x700")
 
 # 初始化勾选布尔变量和筛选/单位的 StringVar
@@ -1462,16 +2041,20 @@ top_frame.bind("<Configure>", lambda e: top_canvas.configure(scrollregion=top_ca
 # 按钮定义：id → (text, command)
 _btn_defs = {
     "refresh":  ("刷新全部数据", refresh_table),
+    "refresh_bazaar": ("刷新BZ数据", refresh_bazaar_data),
+    "refresh_auction": ("刷新AH数据", refresh_auction_data),
     "param":    ("参数设置面板", open_param_panel),
-    "filter":   ("应用筛选条件", apply_filter_sort),
     "save":     ("保存当前设置", save_config),
     "load":     ("加载保存设置", load_config),
     "reset":    ("重置全部默认", reset_all_default),
     "topmost":  ("窗口置顶", toggle_topmost),
     "api":      ("输入api（可选）", open_api_dialog),
     "shortcut": ("快捷键设置", open_shortcut_dialog),
+    "craft":    ("Craft", open_craft),
+    "forge":    ("Forge", open_forge),
+    "enchant":  ("Enchant", open_enchant),
 }
-_default_btn_order = ["refresh", "param", "filter", "save", "load", "reset", "topmost", "shortcut", "api"]
+_default_btn_order = ["refresh", "refresh_bazaar", "refresh_auction", "param", "save", "load", "reset", "topmost", "shortcut", "craft", "forge", "enchant", "api"]
 if not btn_order:
     btn_order[:] = list(_default_btn_order)
 
@@ -1535,10 +2118,11 @@ tree.bind("<Button-3>", show_right_menu)
 # 启动自动加载配置和数据缓存
 load_api_key()
 load_config()
+root.after(100, lambda: _poll_market_result("auction"))
 cached = load_cached_data()
 if cached:
     item_data_cache = cached
-    apply_filter_sort()
+    apply_filter_sort(save_current_widths=False)
     status_var.set(f"已加载缓存数据 {len(cached)} 条，点击刷新获取最新")
 else:
     status_var.set("无缓存数据，点击刷新加载数据")

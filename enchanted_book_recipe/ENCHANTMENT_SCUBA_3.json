@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_SCUBA_3",
+  "displayname": "ENCHANTMENT_SCUBA_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_SCUBA_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_SCUBA_1:4"
+    }
+  ]
+}

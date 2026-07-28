@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_PISCARY_6",
+  "displayname": "ENCHANTMENT_PISCARY_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_PISCARY_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_PISCARY_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_PISCARY_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_PISCARY_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_PISCARY_1:32"
+    }
+  ]
+}

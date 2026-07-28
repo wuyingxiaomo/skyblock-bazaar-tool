@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_ARCANE_4",
+  "displayname": "ENCHANTMENT_ARCANE_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ARCANE_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ARCANE_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_ARCANE_1:8"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_QUICK_BITE_2",
+  "displayname": "ENCHANTMENT_QUICK_BITE_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_QUICK_BITE_1:2"
+    }
+  ]
+}

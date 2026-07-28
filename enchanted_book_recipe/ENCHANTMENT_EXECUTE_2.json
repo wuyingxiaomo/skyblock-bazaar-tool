@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_EXECUTE_2",
+  "displayname": "ENCHANTMENT_EXECUTE_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_EXECUTE_1:2"
+    }
+  ]
+}

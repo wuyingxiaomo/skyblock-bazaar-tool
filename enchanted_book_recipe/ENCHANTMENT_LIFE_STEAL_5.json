@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_LIFE_STEAL_5",
+  "displayname": "ENCHANTMENT_LIFE_STEAL_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_LIFE_STEAL_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_LIFE_STEAL_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_LIFE_STEAL_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_LIFE_STEAL_1:16"
+    }
+  ]
+}

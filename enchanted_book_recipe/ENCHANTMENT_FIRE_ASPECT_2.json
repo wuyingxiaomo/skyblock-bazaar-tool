@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_FIRE_ASPECT_2",
+  "displayname": "ENCHANTMENT_FIRE_ASPECT_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_FIRE_ASPECT_1:2"
+    }
+  ]
+}

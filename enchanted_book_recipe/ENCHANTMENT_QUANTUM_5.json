@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_QUANTUM_5",
+  "displayname": "ENCHANTMENT_QUANTUM_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_QUANTUM_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_QUANTUM_3:4"
+    }
+  ]
+}

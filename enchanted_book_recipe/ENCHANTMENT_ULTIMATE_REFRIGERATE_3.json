@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_REFRIGERATE_3",
+  "displayname": "ENCHANTMENT_ULTIMATE_REFRIGERATE_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_REFRIGERATE_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_REFRIGERATE_1:4"
+    }
+  ]
+}

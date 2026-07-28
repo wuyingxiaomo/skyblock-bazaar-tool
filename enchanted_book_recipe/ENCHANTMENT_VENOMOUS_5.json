@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_VENOMOUS_5",
+  "displayname": "ENCHANTMENT_VENOMOUS_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_VENOMOUS_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_VENOMOUS_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_VENOMOUS_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_VENOMOUS_1:16"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_REITERATE_4",
+  "displayname": "ENCHANTMENT_ULTIMATE_REITERATE_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_REITERATE_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_REITERATE_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_REITERATE_1:8"
+    }
+  ]
+}

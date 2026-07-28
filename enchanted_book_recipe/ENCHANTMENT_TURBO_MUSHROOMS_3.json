@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_MUSHROOMS_3",
+  "displayname": "ENCHANTMENT_TURBO_MUSHROOMS_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_MUSHROOMS_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_MUSHROOMS_1:4"
+    }
+  ]
+}

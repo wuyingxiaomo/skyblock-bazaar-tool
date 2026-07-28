@@ -1,0 +1,30 @@
+{
+  "internalname": "ENCHANTMENT_FEROCIOUS_MANA_9",
+  "displayname": "ENCHANTMENT_FEROCIOUS_MANA_9",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_8:2"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_7:4"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_6:8"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_5:16"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_4:32"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_3:64"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_2:128"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_1:256"
+    }
+  ]
+}

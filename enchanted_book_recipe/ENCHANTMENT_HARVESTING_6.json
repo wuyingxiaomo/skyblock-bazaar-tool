@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_HARVESTING_6",
+  "displayname": "ENCHANTMENT_HARVESTING_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_HARVESTING_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_HARVESTING_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_HARVESTING_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_HARVESTING_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_HARVESTING_1:32"
+    }
+  ]
+}

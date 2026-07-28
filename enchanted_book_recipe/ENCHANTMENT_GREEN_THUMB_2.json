@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_GREEN_THUMB_2",
+  "displayname": "ENCHANTMENT_GREEN_THUMB_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_GREEN_THUMB_1:2"
+    }
+  ]
+}

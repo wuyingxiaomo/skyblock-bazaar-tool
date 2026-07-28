@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_CUBISM_6",
+  "displayname": "ENCHANTMENT_CUBISM_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_CUBISM_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_CUBISM_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_CUBISM_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_CUBISM_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_CUBISM_1:32"
+    }
+  ]
+}

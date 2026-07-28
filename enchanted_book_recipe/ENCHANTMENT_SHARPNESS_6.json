@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_SHARPNESS_6",
+  "displayname": "ENCHANTMENT_SHARPNESS_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_SHARPNESS_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_SHARPNESS_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_SHARPNESS_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_SHARPNESS_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_SHARPNESS_1:32"
+    }
+  ]
+}

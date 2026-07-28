@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_STRONG_MANA_2",
+  "displayname": "ENCHANTMENT_STRONG_MANA_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_STRONG_MANA_1:2"
+    }
+  ]
+}

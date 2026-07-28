@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_TRANSYLVANIAN_5",
+  "displayname": "ENCHANTMENT_TRANSYLVANIAN_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TRANSYLVANIAN_4:2"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_SUNSET_3",
+  "displayname": "ENCHANTMENT_ULTIMATE_SUNSET_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_SUNSET_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_SUNSET_1:4"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_FIRST_STRIKE_5",
+  "displayname": "ENCHANTMENT_FIRST_STRIKE_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_FIRST_STRIKE_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_FIRST_STRIKE_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_FIRST_STRIKE_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_FIRST_STRIKE_1:16"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_DRAGON_HUNTER_3",
+  "displayname": "ENCHANTMENT_DRAGON_HUNTER_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_DRAGON_HUNTER_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_DRAGON_HUNTER_1:4"
+    }
+  ]
+}

@@ -1,63 +1,150 @@
-# SkyBlock Bazaar
+# SkyBlock Bazaar Tool 3.0
 
-一个基于 Tkinter 的 Hypixel SkyBlock Bazaar 数据查看工具。
+Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 四个页面。
 
-## 功能
+## 主要功能
 
-- 获取并显示 Hypixel Bazaar 商品数据
-- 按价格、利润率、订单量和成交量筛选、排序
-- 支持 `k`、`m`、`b` 等单位显示和筛选
-- 自定义表格列、按钮顺序和窗口置顶状态
-- 支持局部快捷键和 Windows 全局快捷键
-- 支持本地数据缓存
+- 统一使用 `bazaar.exe`，通过页面按钮切换 Bazaar、Craft、Forge 和 Enchant
+- 后台独立请求 Bazaar 和 Auction House 数据，切换页面不会中断请求
+- Bazaar 价格、挂单量、成交量和 7 日成交量分析
+- Craft 合成利润、材料成本和材料可制作数量计算
+- Forge 锻造时间、小时利润和材料可制作数量计算
+- Enchant 附魔书等级、铁砧升级配方和罗马数字显示
+- 参数面板实时筛选、单位转换、列显示、列宽和列顺序调整
+- 本地快捷键和 Windows 全局快捷键
+- 配置、缓存和请求状态保存在 exe 所在目录的 `bazaar_config` 文件夹
 
-## 运行环境
+## 页面切换和数据刷新
 
-- Windows
-- Python 3.9 或更高版本
-- 需要联网访问 Hypixel API
+四个页面顶部都有相同的主要操作：
 
-## 安装
+- `刷新全部数据`：请求 Bazaar 和 Auction House
+- `刷新BZ数据`：只请求 Bazaar
+- `刷新AH数据`：只请求 Auction House
+- `参数设置面板`：打开当前页面的筛选和显示设置
+- `保存当前设置`：保存当前页面的窗口、列、按钮、筛选和快捷键设置
+- `加载保存设置`：读取之前保存的设置
+- `重置全部默认`：恢复当前页面的默认设置
+- `窗口置顶`：切换窗口置顶状态
+- `快捷键设置`：设置局部快捷键或 Windows 全局快捷键
+- `输入api（可选）`：保存可选的 Hypixel API Key
 
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+点击页面切换按钮时，当前窗口会关闭并启动同一个 `bazaar.exe` 的对应页面。后台市场请求使用独立 worker，因此切换页面不会取消正在进行的请求。
+
+## 参数面板
+
+参数面板由显示列、筛选条件、单位和数据源设置组成。
+
+### 通用设置
+
+- 每一列都有显示/隐藏勾选框。
+- 数值列可以填写最小值和最大值。
+- 支持 `默认`、`k`、`m`、`b` 单位，例如 `10k`、`2.5m`。
+- 文字列会显示“不支持数值筛选”。
+- Bazaar、Craft、Forge 可以分别勾选 `Bazaar` 和 `Auction House` 数据源。
+- 勾选数据源后，主界面会实时重新筛选；两个数据源都不勾选时不会显示依赖这些数据的行。
+- 参数面板中的表格支持横向、纵向滚动和拖动列宽。
+- 参数面板表头右键可以选择“左移此列”或“右移此列”。
+- `应用筛选并关闭` 会保留本次修改并关闭面板。
+- `仅关闭` 会放弃本次面板修改，恢复打开面板前的状态。
+
+### Bazaar 参数列
+
+- 物品ID
+- 收购价、出售价、单件差价、单件利润率%
+- 收购挂单量、出售挂单量
+- 总收购成交量、总出售成交量
+- 7日收购成交量、7日出售成交量
+
+### Craft 参数列
+
+- 物品ID、物品收购价、物品出售价、AH最低一口价
+- 合成配方的材料
+- 材料收购价、材料出售价
+- 收购价-材料收购、收购价-材料出售
+- 出售价-材料收购、出售价-材料出售
+- 四种对应利润率
+- 物品收购/出售挂单量
+- 物品总收购/出售成交量
+- 物品7日收购/出售成交量
+- 材料收购/出售订单合计
+- 材料总收购/出售量合计
+- 材料7日收购/出售量合计
+- 按材料收购量、出售量和 7 日成交量计算的可制作数量
+
+Craft 的多材料配方会按每种材料的数量计算总成本。材料可制作数量按各材料可供应数量除以配方需求量后取最小值，避免只根据某一种材料高库存做出错误判断。
+
+### Forge 参数列
+
+- 物品ID、物品收购价、物品出售价、AH最低一口价
+- Forge 配方材料、材料收购价、材料出售价
+- 收购价/出售价分别与材料收购/出售组合的四种利润
+- 上述四种利润对应的利润率
+- 上述四种利润对应的小时利润
+- 锻造时间
+- 物品和材料的挂单量、总成交量、7日成交量
+- 材料可制作数量
+
+Forge 的小时利润会将一次锻造利润除以锻造所需小时数。
+
+### Enchant 参数列
+
+- 附魔名称，不包含等级，例如 `ENCHANTMENT_LOOTING`
+- 等级，使用 Minecraft 风格罗马数字，例如 `V`
+- 合成配方材料，显示材料等级和数量，例如 `II x 2`
+- 物品收购价、物品出售价
+- 材料收购价、材料出售价
+- 收购价/出售价与材料收购/出售组合的四种利润和利润率
+- 物品和材料的挂单量、总成交量、7日成交量
+
+Enchant 页面只使用 Bazaar 数据。每种附魔等级的不同合成方式分开显示，例如一个等级 III 附魔书可能分别显示“等级 II x 2”和“等级 I x 4”两行，并分别计算成本和利润。
+
+## 表格和按钮操作
+
+- 点击表头：按该列排序，再次点击切换升序/降序。
+- 拖动表头边界：实时调整列宽。
+- 主表格表头右键：显示“左移此列”和“右移此列”。列顺序会同步到当前页面的参数面板。
+- 主表格数据行右键：复制该行物品 ID 到剪贴板。
+- 顶部按钮右键：显示“左移此按钮”和“右移此按钮”。
+- 主界面和参数面板共用列顺序；保存设置后，下次加载会恢复列宽和顺序。
+
+## 配方来源
+
+- Craft 和 Forge 配方来自 [NotEnoughUpdates-REPO items](https://github.com/NotEnoughUpdates/NotEnoughUpdates-REPO/tree/master/items)。
+- Enchant 配方根据 Hypixel SkyBlock Wiki 和游戏规则手动整理。
+- Enchant 附魔书数量较多，部分等级或配方可能存在错误，欢迎提交修正。
+
+配方目录：
+
+```text
+craft_recipe\
+forge_recipe\
+enchanted_book_recipe\
 ```
 
-如果 PowerShell 阻止虚拟环境脚本，可以直接使用虚拟环境中的 Python：
+正常运行不需要 NotEnoughUpdates 原始仓库。重新生成附魔书配方时，将该仓库放在项目根目录，然后运行：
 
 ```powershell
-.venv\Scripts\python.exe -m pip install -r requirements.txt
+python generate_enchanted_book_recipes.py
 ```
 
-## 启动
+## 安装和运行源码
+
+需要 Windows、Python 3.9+、Tkinter 和网络连接：
 
 ```powershell
+python -m pip install -r requirements.txt
 python bazaar.py
 ```
 
-也可以使用虚拟环境中的 Python：
+## API Key 和本地数据
 
-```powershell
-.venv\Scripts\python.exe bazaar.py
+Bazaar 公共接口通常可以不使用 API Key。API Key 只应保存在：
+
+```text
+bazaar_config\bazaar_config.json
 ```
 
-## API Key
+不要将 API Key、配置文件、Bazaar/AH 数据缓存、运行状态或构建目录提交到 GitHub。
 
-Bazaar 公共接口通常可以不使用 API Key。程序保留了可选的 API Key 输入功能；如果填写，密钥会保存到本地 `config.json`。
-
-不要将包含 API Key 的 `config.json` 上传到 GitHub。
-
-## 本地文件
-
-程序运行后可能生成以下文件：
-
-- `config.json`：窗口、筛选、快捷键和可选 API Key 配置
-- `bazaar_data.json`：Bazaar 数据缓存
-
-这两个文件属于本地运行数据，已加入 `.gitignore`，不会被提交到 Git。
-
-## 许可
-
-本项目使用 MIT License，详见 [LICENSE](LICENSE)。
+当前版本：3.0

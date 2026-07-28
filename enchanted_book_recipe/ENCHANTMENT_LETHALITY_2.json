@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_LETHALITY_2",
+  "displayname": "ENCHANTMENT_LETHALITY_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_LETHALITY_1:2"
+    }
+  ]
+}

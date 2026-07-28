@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_FLASH_4",
+  "displayname": "ENCHANTMENT_ULTIMATE_FLASH_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_FLASH_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_FLASH_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_FLASH_1:8"
+    }
+  ]
+}

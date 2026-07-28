@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_SCAVENGER_5",
+  "displayname": "ENCHANTMENT_SCAVENGER_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_SCAVENGER_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_SCAVENGER_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_SCAVENGER_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_SCAVENGER_1:16"
+    }
+  ]
+}

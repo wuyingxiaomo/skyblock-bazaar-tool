@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_SOUL_EATER_4",
+  "displayname": "ENCHANTMENT_ULTIMATE_SOUL_EATER_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_SOUL_EATER_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_SOUL_EATER_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_SOUL_EATER_1:8"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_THUNDERLORD_4",
+  "displayname": "ENCHANTMENT_THUNDERLORD_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_THUNDERLORD_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_THUNDERLORD_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_THUNDERLORD_1:8"
+    }
+  ]
+}

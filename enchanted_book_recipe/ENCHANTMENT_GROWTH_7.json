@@ -1,0 +1,24 @@
+{
+  "internalname": "ENCHANTMENT_GROWTH_7",
+  "displayname": "ENCHANTMENT_GROWTH_7",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_GROWTH_6:2"
+    },
+    {
+      "A1": "ENCHANTMENT_GROWTH_5:4"
+    },
+    {
+      "A1": "ENCHANTMENT_GROWTH_4:8"
+    },
+    {
+      "A1": "ENCHANTMENT_GROWTH_3:16"
+    },
+    {
+      "A1": "ENCHANTMENT_GROWTH_2:32"
+    },
+    {
+      "A1": "ENCHANTMENT_GROWTH_1:64"
+    }
+  ]
+}

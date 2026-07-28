@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_LUCK_OF_THE_SEA_5",
+  "displayname": "ENCHANTMENT_LUCK_OF_THE_SEA_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_LUCK_OF_THE_SEA_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_LUCK_OF_THE_SEA_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_LUCK_OF_THE_SEA_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_LUCK_OF_THE_SEA_1:16"
+    }
+  ]
+}

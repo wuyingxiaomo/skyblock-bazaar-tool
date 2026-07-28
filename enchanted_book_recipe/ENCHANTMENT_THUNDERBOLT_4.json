@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_THUNDERBOLT_4",
+  "displayname": "ENCHANTMENT_THUNDERBOLT_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_THUNDERBOLT_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_THUNDERBOLT_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_THUNDERBOLT_1:8"
+    }
+  ]
+}

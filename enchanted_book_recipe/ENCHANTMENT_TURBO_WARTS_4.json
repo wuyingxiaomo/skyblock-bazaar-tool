@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_WARTS_4",
+  "displayname": "ENCHANTMENT_TURBO_WARTS_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_WARTS_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_WARTS_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_WARTS_1:8"
+    }
+  ]
+}

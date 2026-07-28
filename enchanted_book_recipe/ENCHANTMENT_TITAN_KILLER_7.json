@@ -1,0 +1,24 @@
+{
+  "internalname": "ENCHANTMENT_TITAN_KILLER_7",
+  "displayname": "ENCHANTMENT_TITAN_KILLER_7",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TITAN_KILLER_6:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TITAN_KILLER_5:4"
+    },
+    {
+      "A1": "ENCHANTMENT_TITAN_KILLER_4:8"
+    },
+    {
+      "A1": "ENCHANTMENT_TITAN_KILLER_3:16"
+    },
+    {
+      "A1": "ENCHANTMENT_TITAN_KILLER_2:32"
+    },
+    {
+      "A1": "ENCHANTMENT_TITAN_KILLER_1:64"
+    }
+  ]
+}

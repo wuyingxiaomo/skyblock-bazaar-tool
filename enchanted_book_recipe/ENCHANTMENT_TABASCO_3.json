@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_TABASCO_3",
+  "displayname": "ENCHANTMENT_TABASCO_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TABASCO_2:2"
+    }
+  ]
+}

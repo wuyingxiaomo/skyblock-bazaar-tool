@@ -1,0 +1,24 @@
+{
+  "internalname": "ENCHANTMENT_BLAST_PROTECTION_7",
+  "displayname": "ENCHANTMENT_BLAST_PROTECTION_7",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_BLAST_PROTECTION_6:2"
+    },
+    {
+      "A1": "ENCHANTMENT_BLAST_PROTECTION_5:4"
+    },
+    {
+      "A1": "ENCHANTMENT_BLAST_PROTECTION_4:8"
+    },
+    {
+      "A1": "ENCHANTMENT_BLAST_PROTECTION_3:16"
+    },
+    {
+      "A1": "ENCHANTMENT_BLAST_PROTECTION_2:32"
+    },
+    {
+      "A1": "ENCHANTMENT_BLAST_PROTECTION_1:64"
+    }
+  ]
+}

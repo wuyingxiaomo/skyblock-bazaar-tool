@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_NO_PAIN_NO_GAIN_3",
+  "displayname": "ENCHANTMENT_ULTIMATE_NO_PAIN_NO_GAIN_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_NO_PAIN_NO_GAIN_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_NO_PAIN_NO_GAIN_1:4"
+    }
+  ]
+}

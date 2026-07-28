@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_STRONG_MANA_6",
+  "displayname": "ENCHANTMENT_STRONG_MANA_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_STRONG_MANA_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_STRONG_MANA_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_STRONG_MANA_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_STRONG_MANA_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_STRONG_MANA_1:32"
+    }
+  ]
+}

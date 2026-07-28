@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_CLEAVE_6",
+  "displayname": "ENCHANTMENT_CLEAVE_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_CLEAVE_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_CLEAVE_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_CLEAVE_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_CLEAVE_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_CLEAVE_1:32"
+    }
+  ]
+}

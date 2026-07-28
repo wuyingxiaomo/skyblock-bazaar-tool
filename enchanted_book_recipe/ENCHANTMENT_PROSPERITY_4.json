@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_PROSPERITY_4",
+  "displayname": "ENCHANTMENT_PROSPERITY_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_PROSPERITY_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_PROSPERITY_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_PROSPERITY_1:8"
+    }
+  ]
+}

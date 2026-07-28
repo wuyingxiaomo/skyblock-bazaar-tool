@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_MANA_VAMPIRE_2",
+  "displayname": "ENCHANTMENT_MANA_VAMPIRE_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_MANA_VAMPIRE_1:2"
+    }
+  ]
+}

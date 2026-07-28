@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_CROP_FEVER_3",
+  "displayname": "ENCHANTMENT_ULTIMATE_CROP_FEVER_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_CROP_FEVER_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_CROP_FEVER_1:4"
+    }
+  ]
+}

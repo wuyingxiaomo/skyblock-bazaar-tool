@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_PALEONTOLOGIST_3",
+  "displayname": "ENCHANTMENT_PALEONTOLOGIST_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_PALEONTOLOGIST_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_PALEONTOLOGIST_1:4"
+    }
+  ]
+}

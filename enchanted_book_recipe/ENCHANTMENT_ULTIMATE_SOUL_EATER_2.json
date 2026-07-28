@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_ULTIMATE_SOUL_EATER_2",
+  "displayname": "ENCHANTMENT_ULTIMATE_SOUL_EATER_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_ULTIMATE_SOUL_EATER_1:2"
+    }
+  ]
+}

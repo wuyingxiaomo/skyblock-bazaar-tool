@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_FEROCIOUS_MANA_6",
+  "displayname": "ENCHANTMENT_FEROCIOUS_MANA_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_FEROCIOUS_MANA_1:32"
+    }
+  ]
+}

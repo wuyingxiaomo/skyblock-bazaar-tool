@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_LUCK_2",
+  "displayname": "ENCHANTMENT_LUCK_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_LUCK_1:2"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_CAYENNE_5",
+  "displayname": "ENCHANTMENT_CAYENNE_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_CAYENNE_4:2"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_FIRST_STRIKE_2",
+  "displayname": "ENCHANTMENT_FIRST_STRIKE_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_FIRST_STRIKE_1:2"
+    }
+  ]
+}

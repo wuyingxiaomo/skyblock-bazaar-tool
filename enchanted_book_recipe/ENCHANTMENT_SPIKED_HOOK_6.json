@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_SPIKED_HOOK_6",
+  "displayname": "ENCHANTMENT_SPIKED_HOOK_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_SPIKED_HOOK_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_SPIKED_HOOK_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_SPIKED_HOOK_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_SPIKED_HOOK_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_SPIKED_HOOK_1:32"
+    }
+  ]
+}

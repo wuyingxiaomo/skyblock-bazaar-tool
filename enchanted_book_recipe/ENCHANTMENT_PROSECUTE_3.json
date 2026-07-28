@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_PROSECUTE_3",
+  "displayname": "ENCHANTMENT_PROSECUTE_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_PROSECUTE_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_PROSECUTE_1:4"
+    }
+  ]
+}

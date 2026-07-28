@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_SMITE_6",
+  "displayname": "ENCHANTMENT_SMITE_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_SMITE_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_SMITE_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_SMITE_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_SMITE_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_SMITE_1:32"
+    }
+  ]
+}

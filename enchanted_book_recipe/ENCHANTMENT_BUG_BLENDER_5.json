@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_BUG_BLENDER_5",
+  "displayname": "ENCHANTMENT_BUG_BLENDER_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_BUG_BLENDER_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_BUG_BLENDER_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_BUG_BLENDER_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_BUG_BLENDER_1:16"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "internalname": "ENCHANTMENT_EFFICIENCY_2",
+  "displayname": "ENCHANTMENT_EFFICIENCY_2",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_EFFICIENCY_1:2"
+    }
+  ]
+}

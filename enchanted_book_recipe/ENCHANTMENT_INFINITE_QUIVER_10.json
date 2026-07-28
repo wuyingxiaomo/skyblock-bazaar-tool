@@ -1,0 +1,33 @@
+{
+  "internalname": "ENCHANTMENT_INFINITE_QUIVER_10",
+  "displayname": "ENCHANTMENT_INFINITE_QUIVER_10",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_9:2"
+    },
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_8:4"
+    },
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_7:8"
+    },
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_6:16"
+    },
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_5:32"
+    },
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_4:64"
+    },
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_3:128"
+    },
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_2:256"
+    },
+    {
+      "A1": "ENCHANTMENT_INFINITE_QUIVER_1:512"
+    }
+  ]
+}

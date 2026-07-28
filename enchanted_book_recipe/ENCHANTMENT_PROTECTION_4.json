@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_PROTECTION_4",
+  "displayname": "ENCHANTMENT_PROTECTION_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_PROTECTION_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_PROTECTION_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_PROTECTION_1:8"
+    }
+  ]
+}

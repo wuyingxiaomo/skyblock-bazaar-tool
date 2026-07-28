@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_TURBO_POTATO_3",
+  "displayname": "ENCHANTMENT_TURBO_POTATO_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_TURBO_POTATO_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_TURBO_POTATO_1:4"
+    }
+  ]
+}

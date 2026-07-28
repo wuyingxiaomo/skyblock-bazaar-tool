@@ -1,0 +1,21 @@
+{
+  "internalname": "ENCHANTMENT_LUCK_6",
+  "displayname": "ENCHANTMENT_LUCK_6",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_LUCK_5:2"
+    },
+    {
+      "A1": "ENCHANTMENT_LUCK_4:4"
+    },
+    {
+      "A1": "ENCHANTMENT_LUCK_3:8"
+    },
+    {
+      "A1": "ENCHANTMENT_LUCK_2:16"
+    },
+    {
+      "A1": "ENCHANTMENT_LUCK_1:32"
+    }
+  ]
+}

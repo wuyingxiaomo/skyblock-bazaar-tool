@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_CORRUPTION_4",
+  "displayname": "ENCHANTMENT_CORRUPTION_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_CORRUPTION_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_CORRUPTION_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_CORRUPTION_1:8"
+    }
+  ]
+}

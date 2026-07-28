@@ -1,0 +1,24 @@
+{
+  "internalname": "ENCHANTMENT_POWER_7",
+  "displayname": "ENCHANTMENT_POWER_7",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_POWER_6:2"
+    },
+    {
+      "A1": "ENCHANTMENT_POWER_5:4"
+    },
+    {
+      "A1": "ENCHANTMENT_POWER_4:8"
+    },
+    {
+      "A1": "ENCHANTMENT_POWER_3:16"
+    },
+    {
+      "A1": "ENCHANTMENT_POWER_2:32"
+    },
+    {
+      "A1": "ENCHANTMENT_POWER_1:64"
+    }
+  ]
+}
