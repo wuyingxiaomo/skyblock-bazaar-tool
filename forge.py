@@ -267,6 +267,8 @@ def format_value(cid, value):
 
 
 def build_rows(raw_data):
+    if not raw_data and not auction_index:
+        return []
     market = {row["name"]: row for row in raw_data if row.get("name")}
     market["SKYBLOCK_COIN"] = {"buy": 1, "sell": 1, "buyOrders": 0, "sellOrders": 0, "vol_buy": 0, "vol_sell": 0, "week_buy": 0, "week_sell": 0}
     material_ids = {mid for recipe in forge_map.values() for mid in recipe["materials"]}
@@ -647,27 +649,16 @@ def open_param_panel():
 
     body = ttk.Frame(setting_win)
     body.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=10, pady=(10, 0))
-    header = ttk.Treeview(body, columns=columns, show="headings", height=1, selectmode="none")
-    header.pack(side=tk.TOP, fill=tk.X)
-    content = ttk.Frame(body)
-    content.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-    canvas = tk.Canvas(content, highlightthickness=0)
-    scroll_y = ttk.Scrollbar(content, orient=tk.VERTICAL, command=canvas.yview)
-    scroll_x = ttk.Scrollbar(content, orient=tk.HORIZONTAL)
+    canvas = tk.Canvas(body, highlightthickness=0)
+    scroll_y = ttk.Scrollbar(body, orient=tk.VERTICAL, command=canvas.yview)
+    scroll_x = ttk.Scrollbar(body, orient=tk.HORIZONTAL, command=canvas.xview)
     inner = ttk.Frame(canvas)
     canvas.create_window((0, 0), window=inner, anchor="nw")
-    canvas.configure(yscrollcommand=scroll_y.set)
+    canvas.configure(yscrollcommand=scroll_y.set, xscrollcommand=scroll_x.set)
     inner.bind("<Configure>", lambda _event: canvas.configure(scrollregion=canvas.bbox("all")))
     scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
     scroll_x.pack(side=tk.BOTTOM, fill=tk.X)
     canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-    def shared_xscroll(*args):
-        canvas.xview(*args)
-        header.xview(*args)
-
-    scroll_x.configure(command=shared_xscroll)
-    canvas.configure(xscrollcommand=lambda first, last: scroll_x.set(first, last))
 
     header_names = {"check": "显示", "field": "字段", "min": "最低值", "max": "最高值", "unit": "单位"}
     resize_state = {"key": None, "start_x": 0, "start_width": 0}
@@ -696,23 +687,13 @@ def open_param_panel():
         root.unbind_all("<B1-Motion>")
         root.unbind_all("<ButtonRelease-1>")
 
-    for key in columns:
-        header.heading(key, text=header_names[key])
-        header.column(key, width=int(panel_col_widths[key]), minwidth=70, stretch=False, anchor="w")
-
-    def sync_header_widths(_event=None):
-        for key in columns:
-            panel_col_widths[key] = max(70, int(header.column(key, "width")))
-        apply_column_widths()
-        canvas.configure(scrollregion=canvas.bbox("all"))
-
-    header.bind("<B1-Motion>", lambda _event: setting_win.after_idle(sync_header_widths))
-    header.bind("<ButtonRelease-1>", sync_header_widths)
-
+    header_widgets = {}
     selected_panel_column = [None]
     column_menu = tk.Menu(setting_win, tearoff=0)
 
     def regrid_panel():
+        for index, key in enumerate(columns):
+            header_widgets[key].grid_configure(row=0, column=index)
         for row, row_cid in enumerate(panel_order, 1):
             for widget, key, span in row_widgets[row_cid]:
                 widget.grid_configure(row=row, column=columns.index(key), columnspan=span)
@@ -738,15 +719,6 @@ def open_param_panel():
         column_menu.entryconfigure(0, state=tk.NORMAL if index > 0 else tk.DISABLED)
         column_menu.entryconfigure(1, state=tk.NORMAL if index < len(columns) - 1 else tk.DISABLED)
         column_menu.tk_popup(event.x_root, event.y_root)
-
-    def show_header_column_menu(event):
-        if header.identify_region(event.x, event.y) != "heading":
-            return
-        index = int(header.identify_column(event.x)[1:]) - 1
-        if 0 <= index < len(columns):
-            show_panel_column_menu(event, columns[index])
-
-    header.bind("<Button-3>", show_header_column_menu, add="+")
 
     row_widgets = {}
     selected_row = [None]
@@ -776,6 +748,13 @@ def open_param_panel():
 
     def bind_row_menu(widget, cid):
         widget.bind("<Button-3>", lambda event, selected=cid: show_row_menu(event, selected), add="+")
+
+    for index, key in enumerate(columns):
+        header = tk.Label(inner, text=header_names[key], anchor="w", relief="raised", cursor="sb_h_double_arrow")
+        header.grid(row=0, column=index, sticky="ew", padx=1, pady=(1, 5))
+        header.bind("<ButtonPress-1>", lambda event, selected=key: start_resize(event, selected))
+        header.bind("<Button-3>", lambda event, selected=key: show_panel_column_menu(event, selected), add="+")
+        header_widgets[key] = header
 
     meta_by_cid = {cid: (name, numeric) for cid, name, numeric in COL_META}
     live_vars = []
@@ -863,7 +842,7 @@ def open_param_panel():
     ttk.Button(buttons, text="应用筛选并关闭", command=lambda: (commit_sources(), apply_filter_sort(), close_panel())).pack(side=tk.LEFT, padx=8)
     ttk.Button(buttons, text="仅关闭", command=lambda: close_panel(True)).pack(side=tk.LEFT, padx=8)
     apply_filter_sort(save_current_widths=False)
-    root.after(200, lambda: (canvas.xview_moveto(panel_scroll.get("x", 0)), header.xview_moveto(panel_scroll.get("x", 0)), canvas.yview_moveto(panel_scroll.get("y", 0))))
+    root.after(200, lambda: (canvas.xview_moveto(panel_scroll.get("x", 0)), canvas.yview_moveto(panel_scroll.get("y", 0))))
 
 
 def restore_and_close(snapshot):
@@ -1044,6 +1023,7 @@ def run_self_test():
 
 def main():
     global forge_map, item_data_cache
+    ensure_data_dir()
     forge_map = load_forge_map()
     item_data_cache = load_cached_data()
     init_ui()

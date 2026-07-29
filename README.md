@@ -4,7 +4,7 @@ Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 
 
 ## 主要功能
 
-- 统一使用 `bazaar.exe`，通过页面按钮切换 Bazaar、Craft、Forge 和 Enchant
+- 打包版使用统一的 `bazaar.exe` 入口，通过页面按钮切换 Bazaar、Craft、Forge 和 Enchant
 - 后台独立请求 Bazaar 和 Auction House 数据，切换页面不会中断请求
 - Bazaar 价格、挂单量、成交量和 7 日成交量分析
 - Craft 合成利润、材料成本和材料可制作数量计算
@@ -29,7 +29,7 @@ Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 
 - `快捷键设置`：设置局部快捷键或 Windows 全局快捷键
 - `输入api（可选）`：保存可选的 Hypixel API Key
 
-点击页面切换按钮时，当前窗口会关闭并启动同一个 `bazaar.exe` 的对应页面。后台市场请求使用独立 worker，因此切换页面不会取消正在进行的请求。
+使用打包版时，点击页面切换按钮会关闭当前窗口并启动同一个 `bazaar.exe` 的对应页面；运行源码时会启动对应的 Python 页面文件。后台市场请求使用独立 worker，因此切换页面不会取消正在进行的请求。
 
 ## 参数面板
 

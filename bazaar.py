@@ -2116,6 +2116,7 @@ header_right_menu.add_command(label="→ 右移此列", command=move_col_right)
 tree.bind("<Button-3>", show_right_menu)
 
 # 启动自动加载配置和数据缓存
+ensure_data_dir()
 load_api_key()
 load_config()
 root.after(100, lambda: _poll_market_result("auction"))

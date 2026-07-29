@@ -1763,6 +1763,7 @@ def run_self_test():
 
 def main():
     global recipe_map, item_data_cache, btn_order
+    ensure_data_dir()
     recipe_map = load_recipe_map()
     item_data_cache = load_cached_data()
     btn_order[:] = normalize_button_order([])
