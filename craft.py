@@ -380,30 +380,65 @@ def format_recipe(materials):
     return " + ".join(f"{item_id} x {format_quantity(amount)}" for item_id, amount in sorted(materials.items()))
 
 
-def aggregate_material_metric(materials, market_by_id, field):
+def bazaar_material_entries(materials, market_by_id):
+    """Return only materials backed by Bazaar data.
+
+    AH fallback rows are useful for displaying an item's AH price, but they
+    must not make the Bazaar material calculations unavailable.
+    """
+    return [
+        (item_id, amount, market_by_id[item_id])
+        for item_id, amount in materials.items()
+        if item_id in market_by_id
+        and market_by_id[item_id].get("_source", "bazaar") == "bazaar"
+    ]
+
+
+def aggregate_material_cost(materials, market_by_id, field):
+    entries = bazaar_material_entries(materials, market_by_id)
+    if not entries:
+        return None
     total = 0
-    for item_id in materials:
-        if item_id not in market_by_id:
+    for _item_id, amount, market_row in entries:
+        value = market_row.get(field)
+        if value is None:
             return None
-        value = market_by_id[item_id].get(field, 0) or 0
-        # 这里保留市场原始合计；实际可制作数量由 material_craft_capacity 计算。
-        total += value
+        total += amount * value
     return total
 
 
-def material_craft_capacity(materials, market_by_id, field):
-    """按所有材料的最小供应比例计算完整成品数量。"""
-    capacities = []
-    for item_id, amount in materials.items():
-        if item_id not in market_by_id or amount <= 0:
+def aggregate_material_metric(materials, market_by_id, field):
+    total = 0
+    found = False
+    for _item_id, _amount, market_row in bazaar_material_entries(materials, market_by_id):
+        value = market_row.get(field)
+        if value is None:
             return None
-        value = market_by_id[item_id].get(field, 0) or 0
+        total += value
+        found = True
+    # AH-only and completely unavailable recipes have no Bazaar metric.
+    return total if found else None
+
+
+def material_craft_capacity(materials, market_by_id, field):
+    """按 Bazaar 材料的最小供应比例计算完整成品数量。"""
+    capacities = []
+    for _item_id, amount, market_row in bazaar_material_entries(materials, market_by_id):
+        if amount <= 0:
+            return None
+        value = market_row.get(field)
+        if value is None:
+            return None
         capacities.append(value / amount)
     return math.floor(min(capacities)) if capacities else None
 
 
 def build_craft_rows(raw_data):
-    market_by_id = {row.get("name"): row for row in raw_data if row.get("name")}
+    market_by_id = {
+        row.get("name"): {**row, "_source": "bazaar"}
+        for row in raw_data
+        if row.get("name")
+    }
     recipe_ids = set(recipe_map)
     recipe_materials = {mid for recipe in recipe_map.values() for mid in recipe.get("materials", {})}
     for item_id in recipe_ids | recipe_materials:
@@ -416,12 +451,13 @@ def build_craft_rows(raw_data):
                 "name": item_id,
                 "buy": price,
                 "sell": price,
-                "buyOrders": 0,
-                "sellOrders": 0,
-                "vol_buy": 0,
-                "vol_sell": 0,
-                "week_buy": 0,
-                "week_sell": 0,
+                "buyOrders": None,
+                "sellOrders": None,
+                "vol_buy": None,
+                "vol_sell": None,
+                "week_buy": None,
+                "week_sell": None,
+                "_source": "auction",
             }
     rows = []
     for item_id, recipe in recipe_map.items():
@@ -432,12 +468,8 @@ def build_craft_rows(raw_data):
         if not item:
             continue
         materials = recipe["materials"]
-        mat_buy = sum(amount * market_by_id[mid].get("buy", 0) for mid, amount in materials.items() if mid in market_by_id)
-        mat_sell = sum(amount * market_by_id[mid].get("sell", 0) for mid, amount in materials.items() if mid in market_by_id)
-        all_materials_available = all(mid in market_by_id for mid in materials)
-        if not all_materials_available:
-            mat_buy = None
-            mat_sell = None
+        mat_buy = aggregate_material_cost(materials, market_by_id, "buy")
+        mat_sell = aggregate_material_cost(materials, market_by_id, "sell")
 
         item_buy = item.get("buy", 0) or 0
         item_sell = item.get("sell", 0) or 0
@@ -449,13 +481,13 @@ def build_craft_rows(raw_data):
             "recipe": format_recipe(materials),
             "mat_buy": mat_buy,
             "mat_sell": mat_sell,
-            "item_buyOrders": item.get("buyOrders", 0) or 0,
-            "item_sellOrders": item.get("sellOrders", 0) or 0,
-            "item_vol_buy": item.get("vol_buy", 0) or 0,
-            "item_vol_sell": item.get("vol_sell", 0) or 0,
-            "item_week_buy": item.get("week_buy", 0) or 0,
-            "item_week_sell": item.get("week_sell", 0) or 0,
         }
+        for field in ("buyOrders", "sellOrders", "vol_buy", "vol_sell", "week_buy", "week_sell"):
+            values[f"item_{field}"] = (
+                item.get(field)
+                if item.get("_source", "bazaar") == "bazaar"
+                else None
+            )
         for field in ("buyOrders", "sellOrders", "vol_buy", "vol_sell", "week_buy", "week_sell"):
             values[f"mat_{field}"] = aggregate_material_metric(materials, market_by_id, field)
         for output_field, source_field in (
@@ -503,7 +535,7 @@ def parse_filter_number(value, default):
 
 def format_value(value, unit, _cid=None):
     if value is None:
-        return "—"
+        return "-"
     return f"{round(value / UNIT_SCALE.get(unit, 1), 2)}"
 
 
@@ -570,18 +602,20 @@ def apply_filter_sort(save_current_widths=True):
     rows.sort(key=lambda row: (row.get(key) is not None, row.get(key) or 0), reverse=sort_reverse)
     tree.delete(*tree.get_children())
     visible_cols = get_visible_cols()
-    tree["columns"] = visible_cols
-    units = {cid: unit_var_map[cid].get() for cid in unit_var_map}
+    # 保持完整逻辑列，displaycolumns 只负责控制显示和顺序。
+    tree["columns"] = COL_CID_LIST
+    tree["displaycolumns"] = visible_cols
+    units = {cid: unit_var_map[cid].get() or "默认" for cid in unit_var_map}
     for row in rows:
         display = []
         for cid in visible_cols:
             display.append(row.get(cid) if not COL_ISNUM_MAP[cid] else format_value(row.get(cid), units[cid], cid))
-        tree.insert("", tk.END, values=display)
+        tree.insert("", tk.END, values=[row.get(cid) if not COL_ISNUM_MAP[cid] else format_value(row.get(cid), units[cid], cid) for cid in COL_CID_LIST])
     arrow = " ↓" if sort_reverse else " ↑"
-    for cid in visible_cols:
+    for cid in COL_CID_LIST:
         heading = COL_NAME_MAP[cid]
         if COL_ISNUM_MAP[cid] and cid not in DISPLAY_NO_UNIT_CIDS:
-            heading += f"({units[cid]})"
+            heading += f"({units.get(cid, '默认')})"
         if cid == key:
             heading += arrow
         tree.heading(cid, text=heading, command=lambda selected=cid: on_header_click(selected))
@@ -1528,10 +1562,13 @@ def open_param_panel():
             return
         panel_order[old_index], panel_order[new_index] = panel_order[new_index], panel_order[old_index]
         col_order[:] = panel_order
-        for row, row_cid in enumerate(panel_order, 1):
-            for widget, column, columnspan in row_widgets[row_cid]:
-                widget.grid_configure(row=row, column=column, columnspan=columnspan)
-        apply_filter_sort(save_current_widths=False)
+        regrid_panel()
+        # 和 Forge 一样立即刷新主表，移动后无需点击“应用筛选并关闭”。
+        try:
+            apply_filter_sort(save_current_widths=False)
+            root.update_idletasks()
+        except tk.TclError:
+            pass
 
     row_menu.add_command(label="↑ 上移", command=lambda: move_row(-1))
     row_menu.add_command(label="↓ 下移", command=lambda: move_row(1))
@@ -1616,15 +1653,21 @@ def open_param_panel():
             variable.set(filter_sources[source])
         apply_filter_sort(save_current_widths=False)
 
-    def close_panel(discard=False):
-        global setting_win, setting_win_geometry, panel_scroll
-        if discard:
-            restore_snapshot()
+    def remove_live_traces():
+        """Remove listeners before restoring panel values in bulk."""
         for variable, trace_id in live_traces:
             try:
                 variable.trace_remove("write", trace_id)
             except tk.TclError:
                 pass
+        live_traces.clear()
+
+    def close_panel(discard=False):
+        global setting_win, setting_win_geometry, panel_scroll
+        # Without this, every restored StringVar triggers a full table rebuild.
+        remove_live_traces()
+        if discard:
+            restore_snapshot()
         stop_resize(None)
         setting_win_geometry = setting_win.geometry()
         panel_scroll = {"x": canvas.xview()[0], "y": canvas.yview()[0]}

@@ -462,7 +462,10 @@ def apply_filter_sort(save_current_widths=True):
     for cid in unit_var_map:
         unit_cache[cid] = unit_var_map[cid].get()
     visible_cols = get_visible_cols()
-    tree["columns"] = visible_cols
+    # 保持完整逻辑列，displaycolumns 只负责控制显示和顺序。
+    # 如果把 columns 改成可见列，隐藏后再勾选会触发 Invalid column index。
+    tree["columns"] = col_cid_list
+    tree["displaycolumns"] = visible_cols
     for row in filtered:
         disp = {"name": row["name"]}
         for meta in col_meta:
@@ -474,9 +477,9 @@ def apply_filter_sort(save_current_widths=True):
                 disp[cid] = format_value(val, unit_cache[cid])
             else:
                 disp[cid] = val
-        tree.insert("", tk.END, values=[disp[c] for c in visible_cols])
+        tree.insert("", tk.END, values=[disp[c] for c in col_cid_list])
     arrow = " ↓" if sort_reverse else " ↑"
-    for cid in visible_cols:
+    for cid in col_cid_list:
         txt = col_name_map[cid]
         if col_isnum_map[cid]:
             txt += f"({unit_cache[cid]})"
@@ -1844,10 +1847,13 @@ def open_param_panel():
             return
         panel_order[old_index], panel_order[new_index] = panel_order[new_index], panel_order[old_index]
         col_order[:] = panel_order
-        for row, row_cid in enumerate(panel_order, 1):
-            for widget, column, columnspan in row_widgets[row_cid]:
-                widget.grid_configure(row=row, column=column, columnspan=columnspan)
-        apply_filter_sort(save_current_widths=False)
+        # 和 Forge 一样：移动完成后立即重排面板并刷新主表，避免必须点击“应用筛选并关闭”。
+        regrid_panel()
+        try:
+            apply_filter_sort(save_current_widths=False)
+            root.update_idletasks()
+        except tk.TclError:
+            pass
 
     row_menu.add_command(label="↑ 上移", command=lambda: move_row(-1))
     row_menu.add_command(label="↓ 下移", command=lambda: move_row(1))
@@ -1932,15 +1938,22 @@ def open_param_panel():
             variable.set(filter_sources[source])
         apply_filter_sort(save_current_widths=False)
 
-    def close_panel(discard=False):
-        global setting_win, setting_win_geometry, panel_scroll
-        if discard:
-            restore_snapshot()
+    def remove_live_traces():
+        """Remove listeners before restoring panel values in bulk."""
         for variable, trace_id in live_traces:
             try:
                 variable.trace_remove("write", trace_id)
             except tk.TclError:
                 pass
+        live_traces.clear()
+
+    def close_panel(discard=False):
+        global setting_win, setting_win_geometry, panel_scroll
+        # Restore all values after disabling traces so the table is rebuilt
+        # once instead of once per field.
+        remove_live_traces()
+        if discard:
+            restore_snapshot()
         stop_resize(None)
         setting_win_geometry = setting_win.geometry()
         panel_scroll = {"x": canvas.xview()[0], "y": canvas.yview()[0]}

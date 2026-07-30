@@ -1,4 +1,4 @@
-# SkyBlock Bazaar Tool 3.0
+# SkyBlock Bazaar Tool 3.1
 
 Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 四个页面。
 
@@ -147,4 +147,4 @@ bazaar_config\bazaar_config.json
 
 不要将 API Key、配置文件、Bazaar/AH 数据缓存、运行状态或构建目录提交到 GitHub。
 
-当前版本：3.0
+当前版本：3.1

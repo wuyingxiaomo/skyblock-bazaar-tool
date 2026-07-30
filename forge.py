@@ -65,6 +65,7 @@ COL_META = [
 COL_IDS = [item[0] for item in COL_META]
 COL_NAMES = {item[0]: item[1] for item in COL_META}
 COL_NUMERIC = {item[0]: item[2] for item in COL_META}
+DISPLAY_NO_UNIT_CIDS = {"duration"}
 DEFAULT_WIDTHS = {cid: (240 if cid == "name" else 300 if cid == "recipe" else 120) for cid in COL_IDS}
 
 root = None
@@ -269,8 +270,22 @@ def format_value(cid, value):
 def build_rows(raw_data):
     if not raw_data and not auction_index:
         return []
-    market = {row["name"]: row for row in raw_data if row.get("name")}
-    market["SKYBLOCK_COIN"] = {"buy": 1, "sell": 1, "buyOrders": 0, "sellOrders": 0, "vol_buy": 0, "vol_sell": 0, "week_buy": 0, "week_sell": 0}
+    market = {
+        row["name"]: {**row, "_source": "bazaar"}
+        for row in raw_data
+        if row.get("name")
+    }
+    market["SKYBLOCK_COIN"] = {
+        "buy": 1,
+        "sell": 1,
+        "buyOrders": None,
+        "sellOrders": None,
+        "vol_buy": None,
+        "vol_sell": None,
+        "week_buy": None,
+        "week_sell": None,
+        "_source": "synthetic",
+    }
     material_ids = {mid for recipe in forge_map.values() for mid in recipe["materials"]}
     for item_id in set(forge_map) | material_ids:
         if item_id in market:
@@ -278,17 +293,38 @@ def build_rows(raw_data):
         auction = lookup_bin(auction_index, item_id)
         if auction:
             price = auction["lowest_bin"]
-            market[item_id] = {"buy": price, "sell": price, "buyOrders": 0, "sellOrders": 0, "vol_buy": 0, "vol_sell": 0, "week_buy": 0, "week_sell": 0}
+            market[item_id] = {
+                "buy": price,
+                "sell": price,
+                "buyOrders": None,
+                "sellOrders": None,
+                "vol_buy": None,
+                "vol_sell": None,
+                "week_buy": None,
+                "week_sell": None,
+                "_source": "auction",
+            }
     rows = []
     for output_id, recipe in forge_map.items():
-        item = market.get(output_id, {"buy": 0, "sell": 0})
+        item = market.get(output_id)
+        if not item:
+            continue
         materials = recipe["materials"]
-        material_rows = [market.get(mid) for mid in materials]
-        complete = all(row is not None for row in material_rows)
-        mat_buy = sum(amount * market[mid]["buy"] for mid, amount in materials.items()) if complete else None
-        mat_sell = sum(amount * market[mid]["sell"] for mid, amount in materials.items()) if complete else None
-        item_buy = item.get("buy", 0) or 0
-        item_sell = item.get("sell", 0) or 0
+        bazaar_materials = [
+            (mid, amount, market[mid])
+            for mid, amount in materials.items()
+            if mid in market and market[mid].get("_source", "bazaar") == "bazaar"
+        ]
+        mat_buy = (
+            sum(amount * source.get("buy", 0) for _mid, amount, source in bazaar_materials)
+            if bazaar_materials else None
+        )
+        mat_sell = (
+            sum(amount * source.get("sell", 0) for _mid, amount, source in bazaar_materials)
+            if bazaar_materials else None
+        )
+        item_buy = item.get("buy")
+        item_sell = item.get("sell")
         row = {
             "name": output_id,
             "item_buy": item_buy,
@@ -308,17 +344,26 @@ def build_rows(raw_data):
             row[f"hour_{profit_key}"] = row[profit_key] / hours if hours and row[profit_key] is not None else None
         for prefix, source in (("item", item),):
             for key in ("buyOrders", "sellOrders", "vol_buy", "vol_sell", "week_buy", "week_sell"):
-                row[f"{prefix}_{key}"] = source.get(key, 0) if source else 0
-        material_totals = {key: 0 for key in ("buyOrders", "sellOrders", "vol_buy", "vol_sell", "week_buy", "week_sell")}
-        if complete:
-            for mid, amount in materials.items():
-                source = market[mid]
-                for key in material_totals:
-                    value = source.get(key, 0) or 0
-                    # 保留各材料市场原始指标合计；实际可制作数量由后面的瓶颈计算得出。
+                row[f"{prefix}_{key}"] = source.get(key) if source.get("_source", "bazaar") == "bazaar" else None
+        metric_keys = ("buyOrders", "sellOrders", "vol_buy", "vol_sell", "week_buy", "week_sell")
+        material_totals = {key: 0 for key in metric_keys} if bazaar_materials else None
+        if material_totals is not None:
+            for _mid, _amount, source in bazaar_materials:
+                for key in metric_keys:
+                    value = source.get(key)
+                    if value is None:
+                        material_totals = None
+                        break
+                    # 这里合计的仍是各 Bazaar 材料的市场原始指标。
                     material_totals[key] += value
-        for key, value in material_totals.items():
-            row[f"mat_{key}"] = value if complete else None
+                if material_totals is None:
+                    break
+        for key in metric_keys:
+            row[f"mat_{key}"] = (
+                material_totals[key]
+                if material_totals is not None
+                else None
+            )
         for output_field, source_field in (
             ("mat_craft_buy", "vol_buy"),
             ("mat_craft_sell", "vol_sell"),
@@ -326,12 +371,15 @@ def build_rows(raw_data):
             ("mat_craft_week_sell", "week_sell"),
         ):
             capacities = []
-            if complete:
-                for mid, amount in materials.items():
-                    if amount <= 0:
-                        capacities = []
-                        break
-                    capacities.append((market[mid].get(source_field, 0) or 0) / amount)
+            for _mid, amount, source in bazaar_materials:
+                if amount <= 0:
+                    capacities = []
+                    break
+                value = source.get(source_field)
+                if value is None:
+                    capacities = []
+                    break
+                capacities.append(value / amount)
             row[output_field] = math.floor(min(capacities)) if capacities else None
         rows.append(row)
     return rows
@@ -368,10 +416,15 @@ def filter_rows(rows):
             continue
         valid = True
         for cid, _name, numeric in COL_META:
-            if not numeric or row.get(cid) is None:
+            if not numeric:
                 continue
             source = "auction" if cid == "item_ah" else "bazaar"
             if not filter_sources.get(source, True):
+                continue
+            if row.get(cid) is None:
+                if str(filter_min[cid]).strip() or str(filter_max[cid]).strip():
+                    valid = False
+                    break
                 continue
             scale = UNIT_SCALE.get(units.get(cid, "默认"), 1)
             low = parse_bound(filter_min[cid], -float("inf")) * scale
@@ -395,12 +448,16 @@ def apply_filter_sort(save_current_widths=True):
     rows.sort(key=lambda row: (row.get(sort_key) is not None, row.get(sort_key) or 0), reverse=sort_reverse)
     tree.delete(*tree.get_children())
     visible = get_visible_columns()
-    tree["columns"] = visible
+    # 保持完整逻辑列，displaycolumns 只负责控制显示和顺序。
+    tree["columns"] = COL_IDS
+    tree["displaycolumns"] = visible
     for row in rows:
-        tree.insert("", tk.END, values=[row.get(cid) if not COL_NUMERIC[cid] else format_value(cid, row.get(cid)) for cid in visible])
+        tree.insert("", tk.END, values=[row.get(cid) if not COL_NUMERIC[cid] else format_value(cid, row.get(cid)) for cid in COL_IDS])
     arrow = " ↓" if sort_reverse else " ↑"
-    for cid in visible:
+    for cid in COL_IDS:
         title = COL_NAMES[cid]
+        if COL_NUMERIC[cid] and cid not in DISPLAY_NO_UNIT_CIDS:
+            title += f"({units.get(cid) or '默认'})"
         if cid == sort_key:
             title += arrow
         tree.heading(cid, text=title, command=lambda selected=cid: on_header_click(selected))
@@ -734,7 +791,13 @@ def open_param_panel():
             panel_order[index], panel_order[target] = panel_order[target], panel_order[index]
             col_order[:] = panel_order
             regrid_panel()
-            apply_filter_sort(save_current_widths=False)
+            def refresh_after_move():
+                try:
+                    apply_filter_sort(save_current_widths=False)
+                    root.update_idletasks()
+                except tk.TclError:
+                    pass
+            root.after_idle(refresh_after_move)
 
     row_menu.add_command(label="↑ 上移", command=lambda: move_row(-1))
     row_menu.add_command(label="↓ 下移", command=lambda: move_row(1))
