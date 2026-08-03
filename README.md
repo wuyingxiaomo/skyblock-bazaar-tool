@@ -1,4 +1,4 @@
-# SkyBlock Bazaar Tool 3.1
+# SkyBlock Bazaar Tool 3.2
 
 Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 四个页面。
 
@@ -12,6 +12,9 @@ Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 
 - Enchant 附魔书等级、铁砧升级配方和罗马数字显示
 - 参数面板实时筛选、单位转换、列显示、列宽和列顺序调整
 - 本地快捷键和 Windows 全局快捷键
+- 所有顶部按钮都可以设置快捷键，快捷键窗口支持重置全部
+- Forge 页面支持窗口置顶和完整快捷键设置
+- 快捷键捕获支持单键、修饰键组合以及 `V+B` 等普通按键组合
 - 配置、缓存和请求状态保存在 exe 所在目录的 `bazaar_config` 文件夹
 
 ## 页面切换和数据刷新
@@ -147,4 +150,4 @@ bazaar_config\bazaar_config.json
 
 不要将 API Key、配置文件、Bazaar/AH 数据缓存、运行状态或构建目录提交到 GitHub。
 
-当前版本：3.1
+当前版本：3.2

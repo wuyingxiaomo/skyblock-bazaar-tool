@@ -954,8 +954,11 @@ def toggle_topmost():
         root.lift()
 
 # ===================== 快捷键功能 =====================
-# 可设置快捷键的按钮ID列表（不含api按钮）
-_SHORTCUT_ELIGIBLE = ["refresh", "param", "save", "load", "reset", "topmost"]
+# 顶部所有按钮都可以设置快捷键。
+_SHORTCUT_ELIGIBLE = [
+    "refresh", "refresh_bazaar", "refresh_auction", "param", "save", "load",
+    "reset", "topmost", "shortcut", "craft", "forge", "enchant", "api",
+]
 
 def _key_event_to_str(event):
     """将 tkinter 键盘事件转为快捷键字符串，如 SHIFT+F3"""
@@ -1475,12 +1478,18 @@ def _apply_shortcuts():
     _combo_bindings.clear()
     cmd_map = {
         "refresh": refresh_table,
+        "refresh_bazaar": refresh_bazaar_data,
+        "refresh_auction": refresh_auction_data,
         "param": open_param_panel,
-        "filter": apply_filter_sort,
         "save": save_config,
         "load": load_config,
         "reset": reset_all_default,
         "topmost": toggle_topmost,
+        "shortcut": open_shortcut_dialog,
+        "craft": open_craft,
+        "forge": open_forge,
+        "enchant": open_enchant,
+        "api": open_api_dialog,
     }
     _INPUT_WIDGETS = (tk.Entry, ttk.Entry, ttk.Combobox, tk.Text)
     for bid in _SHORTCUT_ELIGIBLE:

@@ -929,10 +929,13 @@ def load_config():
 
 
 def reset_all_default():
-    global sort_key, sort_reverse, is_topmost, col_order, setting_win_geometry, pw_sash_positions, panel_scroll, panel_col_widths, panel_column_order, filter_sources
+    global sort_key, sort_reverse, is_topmost, col_order, setting_win_geometry, pw_sash_positions, panel_scroll, panel_col_widths, panel_column_order, filter_sources, shortcut_win_geometry
     sort_key, sort_reverse = "sell_mat_sell", True
     filter_sources = {"bazaar": True, "auction": True}
     is_topmost = False
+    shortcut_map.clear()
+    shortcut_global.clear()
+    shortcut_win_geometry = None
     col_order[:] = list(COL_CID_LIST)
     setting_win_geometry = None
     pw_sash_positions = None
@@ -947,6 +950,7 @@ def reset_all_default():
         unit_var_map[cid].set("默认")
         col_width_map[cid] = DEFAULT_WIDTHS[cid]
     root.attributes("-topmost", False)
+    apply_shortcuts()
     apply_filter_sort(save_current_widths=False)
     rebuild_button_bar()
     status_var.set("已重置 Craft 设置为默认")
@@ -988,7 +992,11 @@ def open_enchant():
         status_var.set(f"打开 Enchant 失败：{exc}")
 
 
-SHORTCUT_ELIGIBLE = ["refresh", "param", "save", "load", "reset", "topmost"]
+# 顶部所有按钮都可以设置快捷键。
+SHORTCUT_ELIGIBLE = [
+    "refresh", "refresh_bazaar", "refresh_auction", "param", "save", "load",
+    "reset", "topmost", "shortcut", "bazaar", "forge", "enchant", "api",
+]
 MODIFIER_KEYSYMS = {"SHIFT_L", "SHIFT_R", "CONTROL_L", "CONTROL_R", "ALT_L", "ALT_R"}
 VK_MAP = {
     "F1": 0x70, "F2": 0x71, "F3": 0x72, "F4": 0x73, "F5": 0x74, "F6": 0x75,
@@ -1039,7 +1047,21 @@ def shortcut_to_win32(value):
 
 
 def shortcut_commands():
-    return {"refresh": refresh_table, "param": open_param_panel, "filter": apply_filter_sort, "save": save_config, "load": load_config, "reset": reset_all_default, "topmost": toggle_topmost}
+    return {
+        "refresh": refresh_table,
+        "refresh_bazaar": refresh_bazaar_data,
+        "refresh_auction": refresh_auction_data,
+        "param": open_param_panel,
+        "save": save_config,
+        "load": load_config,
+        "reset": reset_all_default,
+        "topmost": toggle_topmost,
+        "shortcut": open_shortcut_dialog,
+        "bazaar": open_bazaar,
+        "forge": open_forge,
+        "enchant": open_enchant,
+        "api": open_api_dialog,
+    }
 
 
 def stop_global_hotkeys():
@@ -1144,11 +1166,110 @@ def apply_shortcuts():
     register_global_hotkeys()
 
 
+def _open_key_input_window(parent_dlg, bid, editing, row_labels):
+    """Capture shortcuts with explicit modifier tracking for Windows."""
+    sub = tk.Toplevel(parent_dlg)
+    btn_name = _btn_defs.get(bid, ("?",))[0]
+    sub.title(f"设置快捷键 — {btn_name}")
+    sub.resizable(False, False)
+    sub.attributes("-topmost", True)
+    sub.transient(parent_dlg)
+    captured = [None]
+    mod_state = {"shift": False, "ctrl": False, "alt": False}
+    held_non_mod = [None]
+
+    frame = tk.Frame(sub, padx=20, pady=15)
+    frame.pack()
+    tk.Label(frame, text=f'请按下组合键作为 "{btn_name}" 的快捷键', font=("", 11)).pack(pady=(0, 5))
+    tk.Label(frame, text="(支持 单键 / 修饰键+键 / 字母+字母，如 V+B)", font=("", 9), fg="#888").pack(pady=(0, 5))
+    tk.Label(frame, text="⚠ 非修饰键组合（如 V+B）仅局部生效，全局快捷键无效", font=("", 9), fg="#E53935").pack(pady=(0, 10))
+    display_lbl = tk.Label(frame, text="", font=("", 18, "bold"), fg="#2196F3", width=25, relief="sunken", bg="#fff", anchor="center")
+    display_lbl.pack(pady=(0, 15))
+    warn_lbl = tk.Label(frame, text="", font=("", 9), fg="#E53935")
+    warn_lbl.pack(pady=(0, 5))
+    tk.Label(frame, text="按 ESC 可清空快捷键", font=("", 9), fg="#999").pack()
+    modifier_keys = {"SHIFT_L", "SHIFT_R", "CONTROL_L", "CONTROL_R", "ALT_L", "ALT_R"}
+
+    def on_key_press(event):
+        key = event.keysym.upper()
+        if key in ("SHIFT_L", "SHIFT_R"):
+            mod_state["shift"] = True
+        elif key in ("CONTROL_L", "CONTROL_R"):
+            mod_state["ctrl"] = True
+        elif key in ("ALT_L", "ALT_R"):
+            mod_state["alt"] = True
+        if key in modifier_keys:
+            return
+        if key == "ESCAPE":
+            captured[0] = "ESCAPE"
+            display_lbl.config(text="ESCAPE", fg="#4CAF50")
+            return
+        if held_non_mod[0] and held_non_mod[0] != key:
+            parts = []
+            if mod_state["shift"]:
+                parts.append("SHIFT")
+            if mod_state["ctrl"]:
+                parts.append("CTRL")
+            if mod_state["alt"]:
+                parts.append("ALT")
+            parts.extend((held_non_mod[0], key))
+            captured[0] = "+".join(parts)
+            display_lbl.config(text=captured[0], fg="#4CAF50")
+            warn_lbl.config(text="⚠ 此组合仅局部生效，不可全局")
+            return
+        held_non_mod[0] = key
+        parts = []
+        if mod_state["shift"]:
+            parts.append("SHIFT")
+        if mod_state["ctrl"]:
+            parts.append("CTRL")
+        if mod_state["alt"]:
+            parts.append("ALT")
+        parts.append(key)
+        captured[0] = "+".join(parts)
+        display_lbl.config(text=captured[0], fg="#4CAF50")
+        if len(parts) <= 2:
+            warn_lbl.config(text="")
+
+    def on_key_release(event):
+        key = event.keysym.upper()
+        if key in ("SHIFT_L", "SHIFT_R"):
+            mod_state["shift"] = False
+        elif key in ("CONTROL_L", "CONTROL_R"):
+            mod_state["ctrl"] = False
+        elif key in ("ALT_L", "ALT_R"):
+            mod_state["alt"] = False
+        if held_non_mod[0] == key:
+            held_non_mod[0] = None
+
+    sub.bind("<KeyPress>", on_key_press)
+    sub.bind("<KeyRelease>", on_key_release)
+    sub.focus_force()
+
+    def confirm():
+        if captured[0] is not None:
+            value = "" if captured[0] == "ESCAPE" else captured[0]
+            editing[bid] = value
+            row_labels[bid].config(text=value, bg="#f0f0f0")
+        sub.destroy()
+
+    buttons = tk.Frame(sub)
+    buttons.pack(pady=(10, 10))
+    tk.Button(buttons, text="确认", command=confirm, width=10, font=("", 11)).pack(side=tk.LEFT, padx=6)
+    tk.Button(buttons, text="取消", command=sub.destroy, width=10, font=("", 11)).pack(side=tk.LEFT, padx=6)
+    parent_dlg.update_idletasks()
+    sub.update_idletasks()
+    x = parent_dlg.winfo_x() + (parent_dlg.winfo_width() - sub.winfo_width()) // 2
+    y = parent_dlg.winfo_y() + (parent_dlg.winfo_height() - sub.winfo_height()) // 2
+    sub.geometry(f"+{x}+{y}")
+
+
 def open_shortcut_dialog():
     global shortcut_win_geometry
     dialog = tk.Toplevel(root)
     dialog.title("快捷键设置")
     dialog.resizable(False, False)
+    dialog.attributes("-topmost", True)
     dialog.transient(root)
     dialog.grab_set()
     editing = dict(shortcut_map)
@@ -1170,48 +1291,20 @@ def open_shortcut_dialog():
         tk.Checkbutton(frame, variable=variable).grid(row=index, column=2)
 
         def capture(_event, selected=bid):
-            sub = tk.Toplevel(dialog)
-            sub.title(f"设置快捷键 — {_btn_defs[selected][0]}")
-            sub.transient(dialog)
-            sub.grab_set()
-            shown = tk.StringVar(value="请按下组合键")
-            tk.Label(sub, textvariable=shown, font=("", 16), width=25).pack(padx=20, pady=20)
-            captured = [None]
-
-            def key_press(event):
-                key = event.keysym.upper()
-                if key in MODIFIER_KEYSYMS:
-                    return
-                if key == "ESCAPE":
-                    captured[0] = ""
-                    shown.set("已清空")
-                    return
-                parts = []
-                if event.state & 0x1:
-                    parts.append("SHIFT")
-                if event.state & 0x4:
-                    parts.append("CTRL")
-                if event.state & 0x8:
-                    parts.append("ALT")
-                parts.append(key)
-                captured[0] = "+".join(parts)
-                shown.set(captured[0])
-
-            sub.bind("<KeyPress>", key_press)
-            sub.focus_force()
-
-            def confirm():
-                if captured[0] is not None:
-                    editing[selected] = captured[0]
-                    labels[selected].config(text=captured[0])
-                sub.destroy()
-
-            ttk.Button(sub, text="确认", command=confirm).pack(side=tk.LEFT, padx=8, pady=10)
-            ttk.Button(sub, text="取消", command=sub.destroy).pack(side=tk.LEFT, padx=8, pady=10)
+            _open_key_input_window(dialog, selected, editing, labels)
 
         label.bind("<Button-1>", capture)
     buttons = tk.Frame(dialog)
     buttons.pack(pady=10)
+
+    def reset_shortcuts():
+        editing.clear()
+        editing_global.clear()
+        for bid in SHORTCUT_ELIGIBLE:
+            editing[bid] = ""
+            editing_global[bid] = False
+            global_vars[bid].set(False)
+            labels[bid].config(text="")
 
     def confirm_all():
         global shortcut_win_geometry
@@ -1226,6 +1319,7 @@ def open_shortcut_dialog():
 
     ttk.Button(buttons, text="确定", command=confirm_all).pack(side=tk.LEFT, padx=8)
     ttk.Button(buttons, text="取消", command=dialog.destroy).pack(side=tk.LEFT, padx=8)
+    ttk.Button(buttons, text="重置全部", command=reset_shortcuts).pack(side=tk.LEFT, padx=8)
     if shortcut_win_geometry:
         dialog.geometry(shortcut_win_geometry)
 
