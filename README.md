@@ -1,4 +1,4 @@
-# SkyBlock Bazaar Tool 3.2
+# SkyBlock Bazaar Tool 3.4
 
 Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 四个页面。
 
@@ -15,7 +15,17 @@ Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 
 - 所有顶部按钮都可以设置快捷键，快捷键窗口支持重置全部
 - Forge 页面支持窗口置顶和完整快捷键设置
 - 快捷键捕获支持单键、修饰键组合以及 `V+B` 等普通按键组合
+- 记事本式物品 ID 搜索，支持向上、向下、循环和查找下一个
 - 配置、缓存和请求状态保存在 exe 所在目录的 `bazaar_config` 文件夹
+
+## v3.4 更新
+
+- 修正 Bazaar 收购价和出售价方向：收购价使用 Hypixel Bazaar API 的 `sellPrice`，出售价使用 `buyPrice`。
+- 修正单件差价和利润率：单件差价为 `出售价 - 收购价`，单件利润率为 `(出售价 - 收购价) / 收购价 × 100%`。
+- Craft、Forge 和 Enchant 的材料成本、利润和利润率同步使用修正后的 Bazaar 价格。
+- 新增 `搜索` 按钮，默认快捷键为 `Ctrl+F`。搜索窗口按记事本式方式在当前表格中定位物品，不会修改当前筛选结果。
+- 搜索支持向上、向下、循环查找、查找下一个和 Enter 键查找；匹配行会自动选中并滚动到可见位置。
+- 搜索窗口显示“查找物品ID”，关闭时会保存窗口位置；Bazaar、Craft、Forge、Enchant 都支持。
 
 ## 页面切换和数据刷新
 
@@ -28,11 +38,31 @@ Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 
 - `保存当前设置`：保存当前页面的窗口、列、按钮、筛选和快捷键设置
 - `加载保存设置`：读取之前保存的设置
 - `重置全部默认`：恢复当前页面的默认设置
+- `搜索`：查找当前表格中的物品 ID，默认快捷键为 `Ctrl+F`
 - `窗口置顶`：切换窗口置顶状态
 - `快捷键设置`：设置局部快捷键或 Windows 全局快捷键
 - `输入api（可选）`：保存可选的 Hypixel API Key
 
 使用打包版时，点击页面切换按钮会关闭当前窗口并启动同一个 `bazaar.exe` 的对应页面；运行源码时会启动对应的 Python 页面文件。后台市场请求使用独立 worker，因此切换页面不会取消正在进行的请求。
+
+## 价格与利润计算
+
+Hypixel Bazaar API 的字段名称以即时成交方向命名，工具中的显示含义如下：
+
+- `sellPrice`：玩家创建收购订单时的价格，对应工具中的“收购价”。
+- `buyPrice`：玩家创建出售订单时的价格，对应工具中的“出售价”。
+- 单件差价：`出售价 - 收购价`。
+- 单件利润率：`(出售价 - 收购价) / 收购价 × 100%`。
+
+Craft、Forge 和 Enchant 中四种利润均使用“成品价格 - 对应材料总成本”计算；利润率以对应材料总成本为分母。
+
+## 搜索
+
+- 点击顶部 `搜索` 按钮或按 `Ctrl+F` 打开搜索窗口。
+- 输入物品 ID 的全部或部分内容即可查找，空格会按下划线处理。
+- 可选择“向上”或“向下”，并可勾选“循环查找”。
+- 点击 `查找下一个` 或按 Enter 会选中下一条匹配行，并自动滚动到该行。
+- 点击 `关闭` 或窗口右上角关闭会保存搜索窗口位置。
 
 ## 参数面板
 
@@ -140,14 +170,31 @@ python -m pip install -r requirements.txt
 python bazaar.py
 ```
 
-## API Key 和本地数据
+## 打包版
 
-Bazaar 公共接口通常可以不使用 API Key。API Key 只应保存在：
+目录版和单文件版都使用同一个 `bazaar.exe` 入口：
 
 ```text
-bazaar_config\bazaar_config.json
+bazaar\bazaar.exe
+bazaar_onefile\bazaar.exe
+```
+
+目录版需要保留同目录的 `_internal` 文件夹；单文件版只需要 `bazaar.exe`。首次运行会在 exe 所在目录创建 `bazaar_config` 文件夹。
+
+## API Key 和本地数据
+
+Bazaar 公共接口通常可以不使用 API Key。API Key、页面设置和市场缓存都会保存在：
+
+```text
+bazaar_config\
+  bazaar_config.json
+  craft_config.json
+  forge_config.json
+  enchant_config.json
+  bazaar_data.json
+  auction_data.json
 ```
 
 不要将 API Key、配置文件、Bazaar/AH 数据缓存、运行状态或构建目录提交到 GitHub。
 
-当前版本：3.2
+当前版本：3.4
