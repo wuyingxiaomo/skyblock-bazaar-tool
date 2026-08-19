@@ -318,10 +318,12 @@ def fetch_data():
         sell_price = q["buyPrice"]
         buy_orders = q["buyOrders"]
         sell_orders = q["sellOrders"]
-        vol_buy = q["buyVolume"]
-        vol_sell = q["sellVolume"]
-        week_buy = q["buyMovingWeek"]
-        week_sell = q["sellMovingWeek"]
+        # API fields are named after the order side.  These columns are
+        # named after the player's action: buy consumes sell orders.
+        vol_buy = q["sellVolume"]
+        vol_sell = q["buyVolume"]
+        week_buy = q["sellMovingWeek"]
+        week_sell = q["buyMovingWeek"]
 
         margin = sell_price - buy_price if buy_price > 0 else 0
         pct = (margin / buy_price) * 100 if buy_price > 0 else 0

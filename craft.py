@@ -218,10 +218,10 @@ def fetch_data():
             "pct": round(margin / buy * 100, 2) if buy > 0 else 0,
             "buyOrders": quick.get("buyOrders", 0) or 0,
             "sellOrders": quick.get("sellOrders", 0) or 0,
-            "vol_buy": quick.get("buyVolume", 0) or 0,
-            "vol_sell": quick.get("sellVolume", 0) or 0,
-            "week_buy": quick.get("buyMovingWeek", 0) or 0,
-            "week_sell": quick.get("sellMovingWeek", 0) or 0,
+            "vol_buy": quick.get("sellVolume", 0) or 0,
+            "vol_sell": quick.get("buyVolume", 0) or 0,
+            "week_buy": quick.get("sellMovingWeek", 0) or 0,
+            "week_sell": quick.get("buyMovingWeek", 0) or 0,
         })
     return rows, "success"
 

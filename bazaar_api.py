@@ -37,10 +37,13 @@ def fetch_bazaar_data(api_key="", cache_file=DEFAULT_CACHE_FILE, timeout=30):
                 "pct": round(margin / buy * 100, 2) if buy > 0 else 0,
                 "buyOrders": quick.get("buyOrders", 0) or 0,
                 "sellOrders": quick.get("sellOrders", 0) or 0,
-                "vol_buy": quick.get("buyVolume", 0) or 0,
-                "vol_sell": quick.get("sellVolume", 0) or 0,
-                "week_buy": quick.get("buyMovingWeek", 0) or 0,
-                "week_sell": quick.get("sellMovingWeek", 0) or 0,
+                # The API names these by order side.  The UI names them by
+                # the player's action: buying consumes sell orders, while
+                # selling consumes buy orders.
+                "vol_buy": quick.get("sellVolume", 0) or 0,
+                "vol_sell": quick.get("buyVolume", 0) or 0,
+                "week_buy": quick.get("sellMovingWeek", 0) or 0,
+                "week_sell": quick.get("buyMovingWeek", 0) or 0,
             })
         ensure_data_dir()
         temp_file = f"{cache_file}.{os.getpid()}.tmp"

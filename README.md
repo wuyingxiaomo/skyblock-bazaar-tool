@@ -21,6 +21,7 @@ Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 
 ## v3.4 更新
 
 - 修正 Bazaar 收购价和出售价方向：收购价使用 Hypixel Bazaar API 的 `sellPrice`，出售价使用 `buyPrice`。
+- 修正 Bazaar 总成交量和 7 日成交量方向：立即收购对应 API 的 `sellVolume` / `sellMovingWeek`，立即出售对应 `buyVolume` / `buyMovingWeek`。
 - 修正单件差价和利润率：单件差价为 `出售价 - 收购价`，单件利润率为 `(出售价 - 收购价) / 收购价 × 100%`。
 - Craft、Forge 和 Enchant 的材料成本、利润和利润率同步使用修正后的 Bazaar 价格。
 - 新增 `搜索` 按钮，默认快捷键为 `Ctrl+F`。搜索窗口按记事本式方式在当前表格中定位物品，不会修改当前筛选结果。
@@ -51,6 +52,8 @@ Hypixel Bazaar API 的字段名称以即时成交方向命名，工具中的显�
 
 - `sellPrice`：玩家创建收购订单时的价格，对应工具中的“收购价”。
 - `buyPrice`：玩家创建出售订单时的价格，对应工具中的“出售价”。
+- 收购成交量和 7 日收购成交量：使用 API 的 `sellVolume`、`sellMovingWeek`，即玩家立即收购时成交的出售挂单量。
+- 出售成交量和 7 日出售成交量：使用 API 的 `buyVolume`、`buyMovingWeek`，即玩家立即出售时成交的收购挂单量。
 - 单件差价：`出售价 - 收购价`。
 - 单件利润率：`(出售价 - 收购价) / 收购价 × 100%`。
 
