@@ -1,5 +1,12 @@
 import sys
 
+# PyInstaller cannot discover the page modules through the dynamic import in
+# _dispatch_shared_executable(), so keep explicit references for its analyzer.
+if False:
+    import craft
+    import enchant
+    import forge
+
 
 def _dispatch_shared_executable():
     """Use the Bazaar executable as the entry point for every page and worker."""
@@ -187,6 +194,7 @@ auction_index = {}
 auction_loading = False
 bazaar_loading = False
 is_topmost = False
+search_query = ""
 
 # 单位换算
 UNIT_SCALE = {
@@ -234,9 +242,10 @@ panel_column_order = ["check", "field", "min", "max", "unit"]
 tree_scroll_x = 0           # 主表格横向滚动位置（持久化）
 tree_scroll_y = 0           # 主表格纵向滚动位置（持久化）
 btn_order = []              # 顶部按钮排列顺序（持久化）
-shortcut_map = {}           # 按钮快捷键映射（持久化）{"refresh": "SHIFT+F3", ...}
-shortcut_global = {}        # 快捷键是否全局（持久化）{"refresh": True, ...}
+shortcut_map = {"search": "CTRL+F"}  # 按钮快捷键映射（持久化）
+shortcut_global = {"search": False}  # 快捷键是否全局（持久化）
 shortcut_win_geometry = None  # 快捷键设置窗口位置大小（持久化）
+search_win_geometry = None     # 搜索窗口位置大小（持久化）
 _prev_shortcut_map = {}     # 上一次绑定的快捷键（用于清除旧绑定）
 setting_win = None
 inner_check = None
@@ -305,8 +314,8 @@ def fetch_data():
     item_list = []
     for item_id, info in products.items():
         q = info["quick_status"]
-        buy_price = q["buyPrice"]
-        sell_price = q["sellPrice"]
+        buy_price = q["sellPrice"]
+        sell_price = q["buyPrice"]
         buy_orders = q["buyOrders"]
         sell_orders = q["sellOrders"]
         vol_buy = q["buyVolume"]
@@ -314,8 +323,8 @@ def fetch_data():
         week_buy = q["buyMovingWeek"]
         week_sell = q["sellMovingWeek"]
 
-        margin = buy_price - sell_price if buy_price > 0 else 0
-        pct = (margin / sell_price) * 100 if sell_price > 0 else 0
+        margin = sell_price - buy_price if buy_price > 0 else 0
+        pct = (margin / buy_price) * 100 if buy_price > 0 else 0
 
         item_list.append({
             "name": item_id,
@@ -370,6 +379,107 @@ def filter_data(raw_list):
         if ok:
             filtered.append(row)
     return filtered
+
+
+def open_search_dialog():
+    """以记事本式的方向和循环规则定位表格中的物品 ID。"""
+    global search_query
+    dlg = tk.Toplevel(root)
+    dlg.title("查找")
+    dlg.resizable(False, False)
+    dlg.geometry(search_win_geometry or "430x190")
+    dlg.transient(root)
+    dlg.grab_set()
+
+    query_var = tk.StringVar(value=search_query)
+    direction_var = tk.StringVar(value="down")
+    cycle_var = tk.BooleanVar(value=True)
+    result_var = tk.StringVar(value="")
+    frame = ttk.Frame(dlg, padding=14)
+    frame.pack(fill=tk.BOTH, expand=True)
+    ttk.Label(frame, text="查找物品ID：").grid(row=0, column=0, padx=(0, 8), pady=(0, 10), sticky="w")
+    entry = ttk.Entry(frame, textvariable=query_var, width=36)
+    entry.grid(row=0, column=1, columnspan=2, pady=(0, 10), sticky="ew")
+
+    direction = ttk.LabelFrame(frame, text="方向")
+    direction.grid(row=1, column=0, columnspan=2, sticky="w", padx=(0, 8), pady=(0, 8))
+    ttk.Radiobutton(direction, text="向上", variable=direction_var, value="up").pack(side=tk.LEFT, padx=8, pady=4)
+    ttk.Radiobutton(direction, text="向下", variable=direction_var, value="down").pack(side=tk.LEFT, padx=8, pady=4)
+    ttk.Checkbutton(frame, text="循环查找", variable=cycle_var).grid(row=1, column=2, sticky="w", pady=(0, 8))
+    ttk.Label(frame, textvariable=result_var, foreground="#666").grid(row=2, column=0, columnspan=3, sticky="w", pady=(0, 8))
+
+    def find_next():
+        global search_query
+        term = query_var.get().strip().upper().replace(" ", "_")
+        if not term:
+            result_var.set("请输入要查找的物品 ID")
+            return
+        search_query = query_var.get()
+        items = list(tree.get_children())
+        if not items:
+            result_var.set("当前没有可查找的数据")
+            return
+        selected = tree.selection()
+        current = items.index(selected[0]) if selected and selected[0] in items else None
+        step = -1 if direction_var.get() == "up" else 1
+        start = (current + step) if current is not None else (len(items) - 1 if step < 0 else 0)
+        if step > 0:
+            indexes = list(range(max(start, 0), len(items)))
+            if cycle_var.get():
+                indexes.extend(range(0, min(max(start, 0), len(items))))
+        else:
+            indexes = list(range(min(start, len(items) - 1), -1, -1))
+            if cycle_var.get():
+                indexes.extend(range(len(items) - 1, max(min(start, len(items) - 1), -1), -1))
+        name_index = col_cid_list.index("name")
+        for index in indexes:
+            item = items[index]
+            values = tree.item(item, "values")
+            if name_index < len(values) and term in str(values[name_index]).upper():
+                tree.selection_set(item)
+                tree.focus(item)
+                tree.see(item)
+                result_var.set(f"已找到：{values[name_index]}")
+                return
+        result_var.set("找不到匹配项" if cycle_var.get() else "已到达查找方向的末尾")
+
+    def on_return(_event):
+        find_next()
+        return "break"
+
+    buttons = ttk.Frame(frame)
+    buttons.grid(row=3, column=0, columnspan=3, pady=(2, 0))
+    ttk.Button(buttons, text="查找下一个", command=find_next).pack(side=tk.LEFT, padx=5)
+    def close_dialog():
+        global search_win_geometry
+        search_win_geometry = dlg.geometry()
+        _save_search_geometry(search_win_geometry)
+        dlg.destroy()
+
+    ttk.Button(buttons, text="关闭", command=close_dialog).pack(side=tk.LEFT, padx=5)
+    dlg.protocol("WM_DELETE_WINDOW", close_dialog)
+    entry.bind("<Return>", on_return)
+    entry.focus_set()
+    entry.select_range(0, tk.END)
+
+
+def _save_search_geometry(geometry):
+    cfg = {}
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+                value = json.load(f)
+                if isinstance(value, dict):
+                    cfg = value
+        except Exception:
+            pass
+    cfg["search_win_geometry"] = geometry
+    ensure_data_dir()
+    try:
+        with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+            json.dump(cfg, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
 
 def refresh_table():
     refresh_bazaar_data()
@@ -775,6 +885,7 @@ def save_config():
         "shortcut_map": dict(shortcut_map),
         "shortcut_global": dict(shortcut_global),
         "shortcut_win_geometry": shortcut_win_geometry,
+        "search_win_geometry": search_win_geometry,
         "is_topmost": is_topmost,
         "setting_win_geometry": setting_win_geometry,
         "pw_sash_positions": pw_sash_positions,
@@ -801,10 +912,11 @@ def save_config():
     status_var.set("配置已保存到 bazaar_config.json")
 
 def load_config():
-    global sort_key, sort_reverse, col_order, setting_win_geometry, is_topmost, pw_sash_positions, panel_scroll, panel_col_widths, panel_column_order, filter_sources
+    global sort_key, sort_reverse, col_order, setting_win_geometry, is_topmost, pw_sash_positions, panel_scroll, panel_col_widths, panel_column_order, filter_sources, search_query
     global tree_scroll_x, tree_scroll_y
     config_path = _config_read_path()
     if not os.path.exists(config_path):
+        _apply_shortcuts()
         status_var.set("无保存配置文件")
         return
     try:
@@ -838,12 +950,16 @@ def load_config():
         if "shortcut_map" in cfg:
             shortcut_map.clear()
             shortcut_map.update(cfg["shortcut_map"])
+        shortcut_map.setdefault("search", "CTRL+F")
         if "shortcut_global" in cfg:
             shortcut_global.clear()
             shortcut_global.update(cfg["shortcut_global"])
+        shortcut_global.setdefault("search", False)
         _apply_shortcuts()
         if "shortcut_win_geometry" in cfg and cfg["shortcut_win_geometry"]:
             shortcut_win_geometry = cfg["shortcut_win_geometry"]
+        if cfg.get("search_win_geometry"):
+            search_win_geometry = cfg["search_win_geometry"]
         # 加载列宽（兼容旧配置）
         if "col_widths" in cfg:
             for cid, w in cfg["col_widths"].items():
@@ -910,7 +1026,7 @@ def load_config():
 def reset_all_default():
     global sort_key, sort_reverse, col_order, is_topmost, pw_sash_positions, panel_scroll, panel_col_widths, panel_column_order, filter_sources
     global tree_scroll_x, tree_scroll_y, btn_order, shortcut_map, shortcut_global
-    global setting_win_geometry, shortcut_win_geometry
+    global setting_win_geometry, shortcut_win_geometry, search_win_geometry, search_query
     sort_key = "pct"
     sort_reverse = True
     filter_sources = {"bazaar": True, "auction": True}
@@ -923,10 +1039,14 @@ def reset_all_default():
     tree_scroll_y = 0
     btn_order[:] = list(_default_btn_order)
     shortcut_map.clear()
+    shortcut_map["search"] = "CTRL+F"
     shortcut_global.clear()
+    shortcut_global["search"] = False
+    search_query = ""
     _apply_shortcuts()
     setting_win_geometry = None
     shortcut_win_geometry = None
+    search_win_geometry = None
     root.attributes("-topmost", False)
     _find_topmost_btn().config(text="窗口置顶")
     col_order[:] = list(col_cid_list)
@@ -957,8 +1077,13 @@ def toggle_topmost():
 # 顶部所有按钮都可以设置快捷键。
 _SHORTCUT_ELIGIBLE = [
     "refresh", "refresh_bazaar", "refresh_auction", "param", "save", "load",
-    "reset", "topmost", "shortcut", "craft", "forge", "enchant", "api",
+    "reset", "search", "topmost", "shortcut", "craft", "forge", "enchant", "api",
 ]
+
+
+def _shortcut_dialog_order():
+    """快捷键设置按主界面当前按钮顺序显示。"""
+    return [bid for bid in btn_order if bid in _SHORTCUT_ELIGIBLE and bid in _btn_defs]
 
 def _key_event_to_str(event):
     """将 tkinter 键盘事件转为快捷键字符串，如 SHIFT+F3"""
@@ -1013,7 +1138,7 @@ def open_shortcut_dialog():
     # 每行：按钮名称 + 快捷键显示 + 全局勾选
     row_labels = {}
     global_vars = {}
-    for i, bid in enumerate(_SHORTCUT_ELIGIBLE):
+    for i, bid in enumerate(_shortcut_dialog_order()):
         row = i + 2
         btn_text = _btn_defs.get(bid, ("?",))[0]
         tk.Label(frame, text=btn_text, font=("", 11), anchor="w", width=20).grid(row=row, column=0, padx=5, pady=3, sticky="w")
@@ -1378,12 +1503,19 @@ def _global_hotkey_worker(hotkeys_to_register):
                     if hid == hotkey_id:
                         cmd_map = {
                             "refresh": refresh_table,
+                            "refresh_bazaar": refresh_bazaar_data,
+                            "refresh_auction": refresh_auction_data,
                             "param": open_param_panel,
-                            "filter": apply_filter_sort,
                             "save": save_config,
                             "load": load_config,
                             "reset": reset_all_default,
                             "topmost": toggle_topmost,
+                            "search": open_search_dialog,
+                            "shortcut": open_shortcut_dialog,
+                            "craft": open_craft,
+                            "forge": open_forge,
+                            "enchant": open_enchant,
+                            "api": open_api_dialog,
                         }
                         cmd = cmd_map.get(bid)
                         if cmd:
@@ -1484,6 +1616,7 @@ def _apply_shortcuts():
         "save": save_config,
         "load": load_config,
         "reset": reset_all_default,
+        "search": open_search_dialog,
         "topmost": toggle_topmost,
         "shortcut": open_shortcut_dialog,
         "craft": open_craft,
@@ -2069,6 +2202,7 @@ _btn_defs = {
     "save":     ("保存当前设置", save_config),
     "load":     ("加载保存设置", load_config),
     "reset":    ("重置全部默认", reset_all_default),
+    "search":   ("搜索", open_search_dialog),
     "topmost":  ("窗口置顶", toggle_topmost),
     "api":      ("输入api（可选）", open_api_dialog),
     "shortcut": ("快捷键设置", open_shortcut_dialog),
@@ -2076,7 +2210,7 @@ _btn_defs = {
     "forge":    ("Forge", open_forge),
     "enchant":  ("Enchant", open_enchant),
 }
-_default_btn_order = ["refresh", "refresh_bazaar", "refresh_auction", "param", "save", "load", "reset", "topmost", "shortcut", "craft", "forge", "enchant", "api"]
+_default_btn_order = ["refresh", "refresh_bazaar", "refresh_auction", "param", "save", "load", "reset", "search", "topmost", "shortcut", "craft", "forge", "enchant", "api"]
 if not btn_order:
     btn_order[:] = list(_default_btn_order)
 

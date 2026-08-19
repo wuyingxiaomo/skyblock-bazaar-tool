@@ -23,15 +23,18 @@ def fetch_bazaar_data(api_key="", cache_file=DEFAULT_CACHE_FILE, timeout=30):
         rows = []
         for item_id, info in payload.get("products", {}).items():
             quick = info.get("quick_status", {})
-            buy = quick.get("buyPrice", 0) or 0
-            sell = quick.get("sellPrice", 0) or 0
-            margin = buy - sell if buy > 0 else 0
+            # Hypixel names these from the order-book side: buyPrice is the
+            # highest buy order, while sellPrice is the lowest sell order.
+            # The UI labels describe our action, so the meanings are reversed.
+            buy = quick.get("sellPrice", 0) or 0
+            sell = quick.get("buyPrice", 0) or 0
+            margin = sell - buy if buy > 0 else 0
             rows.append({
                 "name": item_id,
                 "buy": buy,
                 "sell": sell,
                 "margin": margin,
-                "pct": round(margin / sell * 100, 2) if sell > 0 else 0,
+                "pct": round(margin / buy * 100, 2) if buy > 0 else 0,
                 "buyOrders": quick.get("buyOrders", 0) or 0,
                 "sellOrders": quick.get("sellOrders", 0) or 0,
                 "vol_buy": quick.get("buyVolume", 0) or 0,
