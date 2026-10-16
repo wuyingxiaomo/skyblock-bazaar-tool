@@ -1,4 +1,4 @@
-# SkyBlock Bazaar Tool 3.4
+# SkyBlock Bazaar Tool 3.5
 
 Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 四个页面。
 
@@ -17,6 +17,22 @@ Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 
 - 快捷键捕获支持单键、修饰键组合以及 `V+B` 等普通按键组合
 - 记事本式物品 ID 搜索，支持向上、向下、循环和查找下一个
 - 配置、缓存和请求状态保存在 exe 所在目录的 `bazaar_config` 文件夹
+
+## v3.5 更新
+
+- 更新 NEU 物品和配方库，并对照本地 Bazaar / Auction House 缓存核对市场物品。
+- Craft 新增 11 个普通合成配方，包括 Brine Tonic、Marshroom、Corruption I、Hotspot 系列、三种 Bait Sack 等。
+- 更新 5 个已有 Craft 配方的材料数量、产出数量或默认配方：Blood Donor Artifact、Exportable Carrots、Family-Sized Pot of Honeycomb、Jumbo Pot of Honeycomb、Magma Lord Gauntlet。
+- Forge 新增 Powder of One、Powder of the Few、Powder of the Many 和传奇 Precursor Drone，锻造时间分别为 1、1、6、72 小时。
+- Enchant 新增 Karma、Petalfall、Stealth 的 II–V 级铁砧升级配方，共 12 个成品等级、30 种合并方式；不同材料等级继续分行计算成本和利润。
+- 修复 Craft 中普通合成附魔书的 NEU ID 与 Bazaar ID 不一致的问题，例如将 `CORRUPTION;1` 对应到 `ENCHANTMENT_CORRUPTION_1`。
+- 移除 NEU 已取消的 `STEALTH;1` 和 `PRECURSOR_DRONE;0` 普通合成配方，并清理 5 个已从 NEU 删除的旧物品记录。
+- 修复 AH 请求遇到 `Response ended prematurely` 等传输中断时容易失败的问题；对失败页面进行重试，每页最多尝试 4 次。
+- AH 下载全部页面成功后才更新缓存；最终失败时显示具体页码并保留原缓存，避免将不完整的数据保存为成功结果。
+
+更新后共有 2,504 个有效 Craft 配方、124 个 Forge 配方，以及 540 个 Enchant 成品等级（1,582 种合并方式）。Craft 目录也保留无配方物品的 NEU 元数据，因此 JSON 文件数不等于有效配方数。
+
+新增市场物品及 NEU 未记录配方的完整清单见 [配方更新核对报告](recipe_update_report.md)。“新增”以更新前物品库为基准；NEU 未记录配方不代表游戏中一定无法合成。
 
 ## v3.4 更新
 
@@ -152,9 +168,7 @@ Enchant 页面只使用 Bazaar 数据。每种附魔等级的不同合成方式�
 - Enchant 配方根据 Hypixel SkyBlock Wiki 和游戏规则手动整理。
 - Enchant 附魔书数量较多，部分等级或配方可能存在错误，欢迎提交修正。
 
-本次 NEU 配方更新新增 11 个 Craft 配方、4 个 Forge 配方，并更新 5 个 Craft 配方。Enchant 单独补充 Karma、Petalfall、Stealth 的 II–V 级合并配方；VI 级等特殊来源不按两本合并生成。Craft 中通过材料制作附魔书的配方会自动匹配 Bazaar 的 `ENCHANTMENT_名称_等级` ID。
-
-新增市场物品及 NEU 未记录配方的完整清单见 [配方更新核对报告](recipe_update_report.md)。报告使用本地 BZ/AH 缓存核对；“新增”表示相对上一次物品库快照新增，未记录配方不代表游戏中一定无法合成。
+Craft 中通过材料制作附魔书的配方会匹配 Bazaar 的 `ENCHANTMENT_名称_等级` ID。铁砧升级配方单独放在 Enchant；Karma、Stealth 的 VI 级等特殊来源不会按两本合并生成。
 
 配方目录：
 
@@ -206,4 +220,4 @@ bazaar_config\
 
 不要将 API Key、配置文件、Bazaar/AH 数据缓存、运行状态或构建目录提交到 GitHub。
 
-当前版本：3.4
+当前版本：3.5
