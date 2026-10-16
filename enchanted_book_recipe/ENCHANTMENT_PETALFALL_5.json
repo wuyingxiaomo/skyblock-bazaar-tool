@@ -1,0 +1,18 @@
+{
+  "internalname": "ENCHANTMENT_PETALFALL_5",
+  "displayname": "ENCHANTMENT_PETALFALL_5",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_PETALFALL_4:2"
+    },
+    {
+      "A1": "ENCHANTMENT_PETALFALL_3:4"
+    },
+    {
+      "A1": "ENCHANTMENT_PETALFALL_2:8"
+    },
+    {
+      "A1": "ENCHANTMENT_PETALFALL_1:16"
+    }
+  ]
+}

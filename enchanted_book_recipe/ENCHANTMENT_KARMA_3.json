@@ -1,0 +1,12 @@
+{
+  "internalname": "ENCHANTMENT_KARMA_3",
+  "displayname": "ENCHANTMENT_KARMA_3",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_KARMA_2:2"
+    },
+    {
+      "A1": "ENCHANTMENT_KARMA_1:4"
+    }
+  ]
+}

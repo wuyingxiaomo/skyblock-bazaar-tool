@@ -1,0 +1,15 @@
+{
+  "internalname": "ENCHANTMENT_STEALTH_4",
+  "displayname": "ENCHANTMENT_STEALTH_4",
+  "recipes": [
+    {
+      "A1": "ENCHANTMENT_STEALTH_3:2"
+    },
+    {
+      "A1": "ENCHANTMENT_STEALTH_2:4"
+    },
+    {
+      "A1": "ENCHANTMENT_STEALTH_1:8"
+    }
+  ]
+}

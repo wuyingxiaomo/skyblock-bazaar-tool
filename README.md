@@ -46,6 +46,8 @@ Hypixel SkyBlock 市场分析工具，包含 Bazaar、Craft、Forge 和 Enchant 
 
 使用打包版时，点击页面切换按钮会关闭当前窗口并启动同一个 `bazaar.exe` 的对应页面；运行源码时会启动对应的 Python 页面文件。后台市场请求使用独立 worker，因此切换页面不会取消正在进行的请求。
 
+AH 数据按页下载。遇到传输中断、超时或临时服务器错误时，只重试失败的页面，每页最多尝试 4 次；全部页面成功后才更新缓存。最终失败会显示具体页码并继续使用已有 AH 缓存，不会将未下载完整的数据保存为更新成功。
+
 ## 价格与利润计算
 
 Hypixel Bazaar API 的字段名称以即时成交方向命名，工具中的显示含义如下：
@@ -149,6 +151,10 @@ Enchant 页面只使用 Bazaar 数据。每种附魔等级的不同合成方式�
 - Craft 和 Forge 配方来自 [NotEnoughUpdates-REPO items](https://github.com/NotEnoughUpdates/NotEnoughUpdates-REPO/tree/master/items)。
 - Enchant 配方根据 Hypixel SkyBlock Wiki 和游戏规则手动整理。
 - Enchant 附魔书数量较多，部分等级或配方可能存在错误，欢迎提交修正。
+
+本次 NEU 配方更新新增 11 个 Craft 配方、4 个 Forge 配方，并更新 5 个 Craft 配方。Enchant 单独补充 Karma、Petalfall、Stealth 的 II–V 级合并配方；VI 级等特殊来源不按两本合并生成。Craft 中通过材料制作附魔书的配方会自动匹配 Bazaar 的 `ENCHANTMENT_名称_等级` ID。
+
+新增市场物品及 NEU 未记录配方的完整清单见 [配方更新核对报告](recipe_update_report.md)。报告使用本地 BZ/AH 缓存核对；“新增”表示相对上一次物品库快照新增，未记录配方不代表游戏中一定无法合成。
 
 配方目录：
 

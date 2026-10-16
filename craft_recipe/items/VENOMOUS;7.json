@@ -1,0 +1,39 @@
+{
+  "itemid": "minecraft:enchanted_book",
+  "displayname": "§5Enchanted Book",
+  "nbttag": "{ExtraAttributes:{enchantments:{venomous:7},id:\"VENOMOUS;7\"},HideFlags:254,ItemModel:\"minecraft:enchanted_book\",display:{Lore:[0:\"§8Combinable in Anvil\",1:\"\",2:\"§9Venomous VII\",3:\"§7Reduces the target's walk speed by\",4:\"§a20% §7and deals §2+2% §7of your damage\",5:\"§7per second per hit, stacking globally\",6:\"§7up to §240 §7hits. Lasts §65s§7.\",7:\"\",8:\"§6Sources:\",9:\" §7- Enchantment Table (§aI-V§7)\",10:\" §7- Experiments (§aVI§7)\",11:\" §7- Bazaar (§aVI§7)\",12:\" §7- §6Fateful Stinger§7 (§aVII§7)\",13:\"\",14:\"§6Applied To:\",15:\" §7- §fSword\",16:\" §7- §fLongsword\",17:\" §7- §fGauntlet\",18:\"\",19:\"§6Requirements:\",20:\" §7- §bEnchanting Level 17\",21:\"\",22:\"§5§lEPIC\"],Name:\"§5Enchanted Book\"},ench:[]}",
+  "damage": 0,
+  "lore": [
+    "§8Combinable in Anvil",
+    "",
+    "§9Venomous VII",
+    "§7Reduces the target's walk speed by",
+    "§a20% §7and deals §2+2% §7of your damage",
+    "§7per second per hit, stacking globally",
+    "§7up to §240 §7hits. Lasts §65s§7.",
+    "",
+    "§6Sources:",
+    " §7- Enchantment Table (§aI-V§7)",
+    " §7- Experiments (§aVI§7)",
+    " §7- Bazaar (§aVI§7)",
+    " §7- §6Fateful Stinger§7 (§aVII§7)",
+    "",
+    "§6Applied To:",
+    " §7- §fSword",
+    " §7- §fLongsword",
+    " §7- §fGauntlet",
+    "",
+    "§6Requirements:",
+    " §7- §bEnchanting Level 17",
+    "",
+    "§5§lEPIC"
+  ],
+  "internalname": "VENOMOUS;7",
+  "clickcommand": "",
+  "crafttext": "",
+  "modver": "",
+  "infoType": "WIKI_URL",
+  "info": [
+    "https://hypixelskyblock.minecraft.wiki/w/Venomous"
+  ]
+}

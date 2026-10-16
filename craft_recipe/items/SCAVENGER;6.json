@@ -1,0 +1,39 @@
+{
+  "itemid": "minecraft:enchanted_book",
+  "displayname": "§9Enchanted Book",
+  "nbttag": "{ExtraAttributes:{enchantments:{scavenger:6},id:\"SCAVENGER;6\"},HideFlags:254,ItemModel:\"minecraft:enchanted_book\",display:{Lore:[0:\"§8Combinable in Anvil\",1:\"\",2:\"§9Scavenger VI\",3:\"§7Scavenge §61.8 Coins §7per monster\",4:\"§7level on kill.\",5:\"\",6:\"§6Sources:\",7:\" §7- Enchantment Table (§aI-III§7)\",8:\" §7- Season of Jerry (§aIV§7)\",9:\" §7- Experiments (§aIV-V§7)\",10:\" §7- Bazaar (§aIV-V§7)\",11:\" §7- Catacombs (§aV§7)\",12:\" §7- §6Golden Bounty§7 (§aVI§7)\",13:\"\",14:\"§6Applied To:\",15:\" §7- §fSword\",16:\" §7- §fLongsword\",17:\" §7- §fGauntlet\",18:\"\",19:\"§6Requirements:\",20:\" §7- §bEnchanting Level 1\",21:\"\",22:\"§9§lRARE\"],Name:\"§9Enchanted Book\"},ench:[]}",
+  "damage": 0,
+  "lore": [
+    "§8Combinable in Anvil",
+    "",
+    "§9Scavenger VI",
+    "§7Scavenge §61.8 Coins §7per monster",
+    "§7level on kill.",
+    "",
+    "§6Sources:",
+    " §7- Enchantment Table (§aI-III§7)",
+    " §7- Season of Jerry (§aIV§7)",
+    " §7- Experiments (§aIV-V§7)",
+    " §7- Bazaar (§aIV-V§7)",
+    " §7- Catacombs (§aV§7)",
+    " §7- §6Golden Bounty§7 (§aVI§7)",
+    "",
+    "§6Applied To:",
+    " §7- §fSword",
+    " §7- §fLongsword",
+    " §7- §fGauntlet",
+    "",
+    "§6Requirements:",
+    " §7- §bEnchanting Level 1",
+    "",
+    "§9§lRARE"
+  ],
+  "internalname": "SCAVENGER;6",
+  "clickcommand": "",
+  "crafttext": "",
+  "modver": "Firmament 3.4.0-dev+mc1.21.5+g4cd6602",
+  "infoType": "WIKI_URL",
+  "info": [
+    "https://hypixelskyblock.minecraft.wiki/w/Scavenger"
+  ]
+}

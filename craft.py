@@ -353,6 +353,7 @@ def get_item_recipe(item_data):
 
 def load_recipe_map():
     result = {}
+    book_ids = {}
     for recipe_dir in RECIPE_DIRS:
         if not os.path.isdir(recipe_dir):
             continue
@@ -365,11 +366,23 @@ def load_recipe_map():
                     item_data = json.load(f)
                 recipe = get_item_recipe(item_data)
                 item_id = item_data.get("internalname") or os.path.splitext(filename)[0]
+                if item_data.get("itemid") == "minecraft:enchanted_book":
+                    enchantment, separator, level = str(item_id).rpartition(";")
+                    if separator and enchantment and level.isdecimal():
+                        book_ids[item_id] = f"ENCHANTMENT_{enchantment}_{level}"
                 if recipe and item_id:
                     result[item_id] = recipe
             except (OSError, ValueError, TypeError):
                 continue
-    return result
+    # NEU names books as CORRUPTION;1, while Bazaar uses ENCHANTMENT_CORRUPTION_1.
+    normalized = {}
+    for item_id, recipe in result.items():
+        materials = {}
+        for material_id, amount in recipe["materials"].items():
+            market_id = book_ids.get(material_id, material_id)
+            materials[market_id] = materials.get(market_id, 0) + amount
+        normalized[book_ids.get(item_id, item_id)] = {**recipe, "materials": materials}
+    return normalized
 
 
 def format_quantity(value):
